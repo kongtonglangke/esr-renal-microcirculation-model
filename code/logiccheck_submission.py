@@ -170,6 +170,19 @@ if _rm.is_file():
             "L19 repository README is missing %r" % _needle)
     chk("github.com/" in _rt, "L19 repository README carries no repository URL")
 
+# L20 the archival DOI must be the same string in the manuscript and in the
+#     public repository README, and no placeholder may survive anywhere
+_ARCH = "10.6084/m9.figshare.34333371"
+chk(_ARCH in s, "L20 manuscript does not quote the archival DOI")
+chk("will be deposited in a public archive" not in s,
+    "L20 manuscript still carries the pre-DOI promise sentence")
+if _rm.is_file():
+    _rrt = _rm.read_text(encoding="utf-8")
+    chk(_ARCH in _rrt, "L20 repository README does not quote the archival DOI")
+    chk("DOI-pending" not in _rrt and "DOI pending" not in _rrt,
+        "L20 repository README still carries a DOI placeholder")
+
+
 print("=" * 70)
 print("LOGIC / NARRATIVE CHECK   checks run: %d" % n)
 print("=" * 70)

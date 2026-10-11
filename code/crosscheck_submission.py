@@ -226,6 +226,17 @@ if _export.is_dir():
          "Supplementary_Table_S1_Parameter_Ledger.csv").is_file(),
         "X20 export is missing the parameter ledger")
 
+    # X21 the public repository must carry the archival DOI, never a placeholder
+    _rd = (_export / "README.md").read_text(encoding="utf-8")
+    chk("10.6084/m9.figshare.34333371" in _rd,
+        "X21 repository README lacks the archival DOI")
+    chk("DOI-pending" not in _rd and "DOI pending" not in _rd,
+        "X21 repository README still carries a DOI placeholder")
+    _cf = (_export / "CITATION.cff").read_text(encoding="utf-8")
+    chk('doi: "10.6084/m9.figshare.34333371"' in _cf,
+        "X21 CITATION.cff lacks the doi field")
+
+
 print("=" * 70)
 print("INDEPENDENT CROSS-CHECK   checks run: %d" % n)
 print("=" * 70)

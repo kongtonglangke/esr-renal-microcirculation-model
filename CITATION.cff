@@ -7,6 +7,7 @@ date-released: "2026-10-11"
 license: MIT
 repository-code: "https://github.com/kongtonglangke/esr-renal-microcirculation-model"
 url: "https://github.com/kongtonglangke/esr-renal-microcirculation-model"
+doi: "10.6084/m9.figshare.34333371"
 authors:
   - family-names: Wang
     given-names: Yan

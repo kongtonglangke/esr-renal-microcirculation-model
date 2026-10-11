@@ -1,6 +1,6 @@
 # ESR → renal microcirculation: a reduced-order haemodynamic model
 
-[![DOI](https://img.shields.io/badge/DOI-pending-lightgrey)](#citation)
+[![DOI](https://img.shields.io/badge/DOI-10.6084%2Fm9.figshare.34333371-blue)](https://doi.org/10.6084/m9.figshare.34333371)
 [![License: MIT](https://img.shields.io/badge/code%20license-MIT-blue.svg)](#licence)
 [![Python 3.13](https://img.shields.io/badge/python-3.13-blue.svg)](https://www.python.org/)
 [![Reproducible](https://img.shields.io/badge/results-deterministic-brightgreen)](#reproducibility)
@@ -14,7 +14,8 @@ Companion repository for the manuscript
 This repository is the *complete model repository* referred to in the paper's
 Data and Code Availability statement. It contains every line of code, every parameter
 value, every numerical output and every figure, so that each number in the paper can be
-recomputed and each judgement can be checked.
+recomputed and each judgement can be checked. An archived, citable snapshot lives at
+<https://doi.org/10.6084/m9.figshare.34333371>.
 
 ---
 
@@ -158,12 +159,13 @@ choices are stated explicitly rather than hidden:
              ESR-driven wall-shear-stress variability in the renal microcirculation},
   year    = {2026},
   version = {0.8},
+  doi     = {10.6084/m9.figshare.34333371},
   url     = {https://github.com/kongtonglangke/esr-renal-microcirculation-model}
 }
 ```
 
-Please also cite the manuscript (see `CITATION.cff`). A citable DOI will be minted from a
-release tag (see §9) and added here.
+The archived snapshot is citable at **https://doi.org/10.6084/m9.figshare.34333371**.
+Please also cite the manuscript (see `CITATION.cff`).
 
 ## 8. Licence
 
@@ -172,15 +174,19 @@ release tag (see §9) and added here.
 
 ## 9. Versioning
 
-The repository content corresponds to manuscript version **v0.8**. To make the snapshot
-citable independently of later edits, archive a release and mint a DOI:
+The repository content corresponds to manuscript version **v0.8**.
+
+The snapshot is archived and citable independently of later edits:
+**https://doi.org/10.6084/m9.figshare.34333371** (figshare, 11 October 2026).
+The same content is marked by a release tag in this repository:
 
 ```bash
 git tag -a v0.8 -m "Manuscript v0.8"
 git push origin v0.8
-# then archive the tag on Zenodo (or an equivalent DOI-minting archive)
-# and replace the "DOI pending" badge above with the minted DOI.
 ```
+
+If the content changes substantively, archive a new version at figshare and update both the
+DOI badge at the top of this file and the `doi` field in `CITATION.cff`.
 
 ## 10. Use of generative AI
 

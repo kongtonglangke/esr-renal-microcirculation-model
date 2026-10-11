@@ -340,7 +340,7 @@ The intuitive mechanism linking an elevated erythrocyte sedimentation rate to re
 
 **Consent for publication.** Not applicable.
 
-**Availability of data and materials.** All model code, parameter tables, and numerical output are provided as supplementary material (Supplementary Codes S1–S5, Supplementary Table S1, Supplementary Note S1, Supplementary Data S1). The complete model repository will be deposited in a public archive with a citable DOI before publication.
+**Availability of data and materials.** All model code, parameter tables, and numerical output are provided as supplementary material (Supplementary Codes S1–S5, Supplementary Table S1, Supplementary Note S1, Supplementary Data S1). The complete model repository is openly available in a public archive: https://doi.org/10.6084/m9.figshare.34333371.
 
 **Competing interests.** The author declares no competing interests.
 
@@ -413,4 +413,4 @@ The intuitive mechanism linking an elevated erythrocyte sedimentation rate to re
 
 ---
 
-*Manuscript v0.8. 28 references, all verified against PubMed and Crossref; single author Yan Wang. ESR range 10–100 mm h⁻¹. The central result is that the anatomical target of the ESR-driven wall-stress-variability effect is decided by the sign of the cell-free-layer/shear relation (Section 3.7), which the literature leaves unresolved. Code: `code/esr_model_v2.py` (vessels, incl. the CFL/shear-sign robustness sweep of Section 3.7), `code/esr_model_v3.py` (Layer 1), `code/esr_model_v4_flowcurve.py` (pressure–flow curve, Section 3.8), `code/make_ms_figures.py` (figures). Results: `results/v2_*`, `results/v3_*`, `results/v4_*`. Figures: `CHM_submission/03_Figures/`.*
+*Manuscript v0.8. 28 references, all verified against PubMed and Crossref; single author Yan Wang. ESR range 10–100 mm h⁻¹. The central result is that the anatomical target of the ESR-driven wall-stress-variability effect is decided by the sign of the cell-free-layer/shear relation (Section 3.7), which the literature leaves unresolved. Code: `code/esr_model_v2.py` (vessels, incl. the CFL/shear-sign robustness sweep of Section 3.7), `code/esr_model_v3.py` (Layer 1), `code/esr_model_v4_flowcurve.py` (pressure–flow curve, Section 3.8), `code/make_ms_figures.py` (figures). Results: `results/v2_*`, `results/v3_*`, `results/v4_*`. Figures: `CHM_submission/03_Figures/`. Repository: `https://doi.org/10.6084/m9.figshare.34333371`.*

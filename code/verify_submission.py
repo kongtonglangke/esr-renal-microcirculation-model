@@ -721,6 +721,22 @@ def main():
         ok(("\u7a3f\u4ef6\u7248\u672c %s" % _v) in _rd,
            "E9 footer says %s but the checklist declares another version" % _v)
 
+    # E10 the archival DOI must be quoted and the pre-DOI promise must be gone
+    #     (the repository is now deposited; the old "will be deposited" sentence
+    #     must never come back)
+    _arch_doi = "10.6084/m9.figshare.34333371"
+    for _rel in [MS,
+                 SUB / "01_Title_Page.md",
+                 SUB / "06_Statements_and_Declarations.md",
+                 SUB / "_abstract_200w.txt",
+                 SUB / "05_Cover_Letter.md"]:
+        _tx = _rel.read_text(encoding="utf-8")
+        ok(_arch_doi in _tx,
+           "E10 %s does not quote the archival DOI" % _rel.name)
+        ok("will be deposited in a public archive" not in _tx,
+           "E10 %s still carries the pre-DOI promise sentence" % _rel.name)
+
+
     global checks
     print("=" * 78)
     print("VERIFICATION REPORT   checks run: %d" % checks)
