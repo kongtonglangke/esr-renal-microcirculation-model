@@ -242,6 +242,61 @@ _cf2 = (_export / "CITATION.cff").read_text(encoding="utf-8")
 chk("0000-0002-3474-7984" in _cf2,
     "X22 CITATION.cff lacks the author ORCID")
 
+# X23 Figure 6 must render without any overlapping text label (panel titles,
+#     tick labels, legends, annotations).  The figure is re-rendered here
+#     in-memory, so the check is independent of the stored PNG/TIFF.
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import importlib.util as _ilu
+
+_spec = _ilu.spec_from_file_location("_mfig", HERE / "code" / "make_ms_figures.py")
+_mfig = _ilu.module_from_spec(_spec)
+_spec.loader.exec_module(_mfig)
+
+
+def _fig6_texts(fig):
+    fig.canvas.draw()
+    r = fig.canvas.get_renderer()
+    out = []
+    for ax in fig.axes:
+        x0, x1 = sorted(ax.get_xlim())
+        y0, y1 = sorted(ax.get_ylim())
+        items = [ax.title, ax.xaxis.label, ax.yaxis.label]
+        items += [t.label1 for t in ax.xaxis.get_major_ticks()
+                  if x0 - 1e-9 <= t.get_loc() <= x1 + 1e-9]
+        items += [t.label1 for t in ax.yaxis.get_major_ticks()
+                  if y0 - 1e-9 <= t.get_loc() <= y1 + 1e-9]
+        items += list(ax.texts)
+        leg = ax.get_legend()
+        if leg is not None:
+            items += list(leg.get_texts())
+        for t in items:
+            if t is None or not t.get_text().strip():
+                continue
+            bb = t.get_window_extent(renderer=r)
+            if bb.width > 0 and bb.height > 0:
+                out.append((t.get_text(), bb))
+    return out
+
+
+_mfig.save = lambda fig, name: None            # never touch the figures on disk
+plt.close("all")
+_mfig.figure6()
+_f6 = plt.figure(plt.get_fignums()[-1])
+_txt = _fig6_texts(_f6)
+_clash = []
+for _i in range(len(_txt)):
+    for _j in range(_i + 1, len(_txt)):
+        _a, _ba = _txt[_i]
+        _b, _bb = _txt[_j]
+        if (min(_ba.x1, _bb.x1) - max(_ba.x0, _bb.x0) > 0.5 and
+                min(_ba.y1, _bb.y1) - max(_ba.y0, _bb.y0) > 0.5):
+            _clash.append("%s <-> %s" % (_a[:26], _b[:26]))
+plt.close(_f6)
+chk(not _clash, "X23 Figure 6 has overlapping text labels: %s" % _clash[:3])
+chk(len(_txt) >= 40, "X23 Figure 6 text labels found: %d" % len(_txt))
+
 print("=" * 70)
 print("INDEPENDENT CROSS-CHECK   checks run: %d" % n)
 print("=" * 70)

@@ -51,6 +51,12 @@ VESSEL_LABEL = {"Glomerular capillary": "Glomerular capillary\n(cortex, high she
                 "Peritubular capillary": "Peritubular capillary\n(cortex)",
                 "Vasa recta (medulla)": "Vasa recta\n(medulla)",
                 "Vasa recta - hypoperfused": "Vasa recta\n(hypoperfused)"}
+# compact names, used where the full label would collide with a neighbouring
+# panel (Figure 6a legend, Figure 6b tick labels)
+VESSEL_SHORT = {"Glomerular capillary": "Glomerular cap.",
+                "Peritubular capillary": "Peritubular cap.",
+                "Vasa recta (medulla)": "Vasa recta, medulla",
+                "Vasa recta - hypoperfused": "Vasa recta, hypoperfused"}
 VESSEL_COL = {"Glomerular capillary": CB["blue"],
               "Peritubular capillary": CB["sky"],
               "Vasa recta (medulla)": CB["green"],
@@ -231,17 +237,17 @@ def figure6():
     for v in VESSEL_ORDER:
         sub = vs[vs.vessel == v].sort_values("ESR_mm_h")
         a.plot(sub.ESR_mm_h, sub.WSS_CV, "o-", ms=4, lw=1.6, color=VESSEL_COL[v],
-               label=VESSEL_LABEL[v].replace("\n", " "))
-    a.set(xlabel="ESR (mm h$^{-1}$)", ylabel="WSS coefficient of variation (-)",
-          title="(a) variability rises monotonically with ESR")
-    a.legend(fontsize=7.2, loc="upper left")
+               label=VESSEL_SHORT[v])
+    a.set(xlabel="ESR (mm h$^{-1}$)", ylabel="WSS coefficient of variation (-)")
+    a.set_title("(a) variability rises monotonically\nwith ESR", fontsize=9.4, pad=7)
+    a.legend(fontsize=7.0, loc="upper left")
     b = ax[1]
     gamma = fc.gamma_w_s.values.astype(float)
     excess = np.array([float(str(fc.loc[v, "d_WSS_CV"]).rstrip("x")) for v in VESSEL_ORDER]) - 1.0
     b.barh(np.arange(len(VESSEL_ORDER)), excess, color=[VESSEL_COL[v] for v in VESSEL_ORDER], height=0.6)
     b.set_yticks(np.arange(len(VESSEL_ORDER)))
-    b.set_yticklabels([f"{VESSEL_LABEL[v].replace(chr(10),' ')} ({g:.0f} s$^{{-1}}$)"
-                       for v, g in zip(VESSEL_ORDER, gamma)], fontsize=7.4)
+    b.set_yticklabels([f"{VESSEL_SHORT[v]}  ({g:.0f} s$^{{-1}}$)"
+                       for v, g in zip(VESSEL_ORDER, gamma)], fontsize=7.6)
     for i, e in enumerate(excess):
         b.text(e + 0.004, i, f"{e*100:.1f} %", va="center", fontsize=8)
     b.set(xlabel="excess WSS variability, ESR 100 vs ESR 10 (%)", xlim=(0, 0.52))
@@ -270,13 +276,15 @@ def figure6():
     c.barh(y, share_gate, left=share_geo, color=CB["grey"], height=0.6, hatch="///",
            edgecolor="white", label="shear gate, Eq (9)")
     c.set_yticks(y); c.set_yticklabels([])
-    c.set(xlim=(0, 118), xlabel="share of the log increase in WSS variability (%)",
-          title="(c) the geometric factor carries the medullary excess")
+    c.set(xlim=(0, 118), xlabel="share of the log increase in WSS variability (%)")
+    c.set_title("(c) the geometric factor carries the medullary excess",
+                fontsize=9.4, pad=7)
     c.invert_yaxis()
     for i, (sg, sgeo) in enumerate(zip(share_gate, share_geo)):
         c.text(101, i, f"gate {sg:.1f} %", va="center", fontsize=7.6, color=CB["black"])
     c.axvline(100, color=CB["grey"], lw=0.8, ls=":")
-    c.legend(fontsize=7.0, loc="lower left", bbox_to_anchor=(0.0, -0.42), ncol=1)
+    c.legend(fontsize=7.0, loc="upper center", bbox_to_anchor=(0.5, -0.32), ncol=2,
+             columnspacing=1.1, handlelength=1.5)
 
     # ---- (d) robustness to the SIGN of the CFL / shear-rate relation
     d = ax[3]
@@ -303,7 +311,7 @@ def figure6():
           xlabel="CFL shear exponent $s$   ($\\delta \\propto \\dot{\\gamma}^{\\,s}$)",
           ylabel="excess WSS variability (%)")
     d.set_title("(d) the worst vessel is set by the sign of $s$\n"
-                "(excess at ESR 100 vs 10 mm h$^{-1}$)", fontsize=9.4, pad=7)
+                "(ESR 100 vs 10 mm h$^{-1}$ excess)", fontsize=9.4, pad=10)
 
     fig.suptitle("Figure 6  WSS temporal variability: amplification, its decomposition, "
                  "and its dependence on the sign of the cell-free-layer/shear relation",
