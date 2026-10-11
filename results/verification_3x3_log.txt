@@ -1,21 +1,21 @@
 ########################################################################
 # ROUND 1
 ########################################################################
-  1 verify_submission    PASS      514 checks
-  2 crosscheck           PASS      113 checks
-  3 logiccheck           PASS      75 checks
+  1 verify_submission    PASS      519 checks
+  2 crosscheck           PASS      114 checks
+  3 logiccheck           PASS      78 checks
   -> round CLEAN
 ########################################################################
 # ROUND 2
 ########################################################################
-  1 verify_submission    PASS      514 checks
-  2 crosscheck           PASS      113 checks
-  3 logiccheck           PASS      75 checks
+  1 verify_submission    PASS      519 checks
+  2 crosscheck           PASS      114 checks
+  3 logiccheck           PASS      78 checks
   -> round CLEAN
 ########################################################################
 # ROUND 3
 ########################################################################
-  1 verify_submission    PASS      514 checks
-  2 crosscheck           PASS      113 checks
-  3 logiccheck           PASS      75 checks
+  1 verify_submission    PASS      519 checks
+  2 crosscheck           PASS      114 checks
+  3 logiccheck           PASS      78 checks
   -> round CLEAN

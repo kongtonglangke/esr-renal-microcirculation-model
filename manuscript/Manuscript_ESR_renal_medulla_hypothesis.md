@@ -2,7 +2,7 @@
 
 **Article type:** Original Research Article (computational / theoretical modelling)
 
-**Author:** Yan Wang — Department of Nephrology, Affiliated Hospital of Gansu Medical College, Pingliang, Gansu, China
+**Author:** Yan Wang (ORCID 0000-0002-3474-7984) — Department of Nephrology, Affiliated Hospital of Gansu Medical College, Pingliang, Gansu, China
 
 **Correspondence:** Yan Wang, Department of Nephrology, Affiliated Hospital of Gansu Medical College, Pingliang, Gansu, China
 

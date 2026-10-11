@@ -237,6 +237,11 @@ if _export.is_dir():
         "X21 CITATION.cff lacks the doi field")
 
 
+# X22 the public repository CITATION.cff must credit the author's ORCID
+_cf2 = (_export / "CITATION.cff").read_text(encoding="utf-8")
+chk("0000-0002-3474-7984" in _cf2,
+    "X22 CITATION.cff lacks the author ORCID")
+
 print("=" * 70)
 print("INDEPENDENT CROSS-CHECK   checks run: %d" % n)
 print("=" * 70)

@@ -11,6 +11,7 @@ doi: "10.6084/m9.figshare.34333371"
 authors:
   - family-names: Wang
     given-names: Yan
+    orcid: "https://orcid.org/0000-0002-3474-7984"
     affiliation: "Department of Nephrology, Affiliated Hospital of Gansu Medical College, Pingliang, Gansu, China"
 keywords:
   - erythrocyte sedimentation rate
@@ -29,6 +30,7 @@ preferred-citation:
   authors:
     - family-names: Wang
       given-names: Yan
+      orcid: "https://orcid.org/0000-0002-3474-7984"
       affiliation: "Department of Nephrology, Affiliated Hospital of Gansu Medical College, Pingliang, Gansu, China"
   journal: "Clinical Hemorheology and Microcirculation"
   year: 2026

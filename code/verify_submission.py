@@ -737,6 +737,17 @@ def main():
            "E10 %s still carries the pre-DOI promise sentence" % _rel.name)
 
 
+    # E11 the author ORCID must be present and the "not supplied" placeholder gone
+    _orcid = "0000-0002-3474-7984"
+    for _rel in [MS, SUB / "01_Title_Page.md", SUB / "02_Manuscript.md"]:
+        _tx = _rel.read_text(encoding="utf-8")
+        ok(_orcid in _tx, "E11 %s lacks the author ORCID" % _rel.name)
+    _tp = (SUB / "01_Title_Page.md").read_text(encoding="utf-8")
+    ok("not supplied" not in _tp,
+       "E11 01_Title_Page.md still carries the 'not supplied' ORCID placeholder")
+    ok("not supplied" not in MS.read_text(encoding="utf-8"),
+       "E11 manuscript still carries the 'not supplied' ORCID placeholder")
+
     global checks
     print("=" * 78)
     print("VERIFICATION REPORT   checks run: %d" % checks)

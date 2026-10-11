@@ -183,6 +183,13 @@ if _rm.is_file():
         "L20 repository README still carries a DOI placeholder")
 
 
+# L21 the ORCID must be the same string on the title page and in the manuscript
+_tpo = (SUB / "01_Title_Page.md").read_text(encoding="utf-8")
+chk("0000-0002-3474-7984" in s, "L21 manuscript lacks the author ORCID")
+chk("0000-0002-3474-7984" in _tpo, "L21 title page lacks the author ORCID")
+chk("not supplied" not in _tpo,
+    "L21 title page still carries the 'not supplied' ORCID placeholder")
+
 print("=" * 70)
 print("LOGIC / NARRATIVE CHECK   checks run: %d" % n)
 print("=" * 70)
