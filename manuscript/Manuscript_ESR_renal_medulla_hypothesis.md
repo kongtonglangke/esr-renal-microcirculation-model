@@ -340,7 +340,7 @@ The intuitive mechanism linking an elevated erythrocyte sedimentation rate to re
 
 **Consent for publication.** Not applicable.
 
-**Availability of data and materials.** All model code, parameter tables, and numerical output are provided as supplementary material (Supplementary Codes S1–S5, Supplementary Table S1, Supplementary Note S1, Supplementary Data S1). The complete model repository is openly available in a public archive: https://doi.org/10.6084/m9.figshare.34333371.
+**Availability of data and materials.** All model code, parameter tables, and numerical output are provided as supplementary material (Supplementary Codes S1–S5, Supplementary Tables S1–S2, Supplementary Note S1, Supplementary Data S1). Supplementary Protocol S1 sets out the bench validation of predictions P1 and P2. The complete model repository is openly available in a public archive: https://doi.org/10.6084/m9.figshare.34333371.
 
 **Competing interests.** The author declares no competing interests.
 

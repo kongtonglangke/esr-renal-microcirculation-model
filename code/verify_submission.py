@@ -748,6 +748,22 @@ def main():
     ok("not supplied" not in MS.read_text(encoding="utf-8"),
        "E11 manuscript still carries the 'not supplied' ORCID placeholder")
 
+    # E12 every supplementary item shipped with the submission must be named in
+    # the Data-availability statement (manuscript and title page must agree)
+    _supp_tokens = ["Supplementary Codes S1\u2013S5", "Supplementary Tables S1\u2013S2",
+                    "Supplementary Note S1", "Supplementary Protocol S1",
+                    "Supplementary Data S1"]
+    _ms_tx = MS.read_text(encoding="utf-8")
+    _tp_tx = (SUB / "01_Title_Page.md").read_text(encoding="utf-8")
+    for _tok in _supp_tokens:
+        ok(_tok in _ms_tx,
+           "E12 manuscript availability statement omits '%s'" % _tok)
+    ok("Supplementary Protocol S1" in _tp_tx,
+       "E12 title page availability statement omits Supplementary Protocol S1")
+    ok("Supplementary_Protocol_S1_Experimental_Validation.docx"
+       in (SUB / "06_Statements_and_Declarations.md").read_text(encoding="utf-8"),
+       "E12 06_Statements.md supplementary table omits the Protocol S1 row")
+
     global checks
     print("=" * 78)
     print("VERIFICATION REPORT   checks run: %d" % checks)
