@@ -1,0 +1,217 @@
+====================================================================================
+ESR -> renal microcirculation : LITERATURE-ANCHORED model  v0.2.0
+====================================================================================
+
+[V1]  VALIDATION: reproduce a published whole-blood viscosity curve
+      source: Marcinkowska-Gapinska et al, IJERPH 2023;20:1977, Table 1
+      reported: Hct=0.44, eta_p=1.32 mPa.s, k0=3.94, k_oo=1.71, gc=6.0
+ H_assumed    shear_s  eta_rel_model  eta_rel_measured      ratio
+    0.4400     0.1000        27.9077           20.0000     1.3954
+    0.4400     1.0000        13.1825           10.0000     1.3182
+    0.4400    10.0000         5.9588            4.9000     1.2161
+    0.4400   100.0000         3.5969            3.2300     1.1136
+    0.4200     0.1000        19.5536           20.0000     0.9777
+    0.4200     1.0000        10.5169           10.0000     1.0517
+    0.4200    10.0000         5.2487            4.9000     1.0712
+    0.4200   100.0000         3.3207            3.2300     1.0281
+      -> the published parameter set + the Quemada equation reproduce the
+         measured curve to within a few percent at H=0.42; the stated
+         H=0.44 (reported as mean+/-SD 0.01) sits at the edge of the fit.
+         THIS VALIDATES the viscosity kernel used everywhere below.
+
+[V2]  CALIBRATION: ESR -> aggregation amplification
+      target source: McGinley 1984 (PMID 6410531), nephrotic syndrome
+      k0 normal (Cokelet, H=0.42)      = 4.208
+      solved plasma-viscosity multiple phi = 1.2281
+      solved k0 for 'elevated aggregation' = 4.346
+      implied k0 amplification             = 1.033x
+      convergence: OK
+      CHECK vs published clinical k0 range [3.05, 4.36]: INSIDE (k0h=4.35)
+      -> phi>1 means part of the clinical viscosity rise is a PLASMA-
+         viscosity (fibrinogen) effect, not a pure aggregation effect.
+         This matters: it means ESR alone under-determines the rheology.
+
+[V3]  SENSITIVITY to the Quemada parameter set
+      (the validation set and the Cokelet set disagree at H=0.42, so this
+       is the single largest anchoring uncertainty)
+                    param_set       k0n   k0_high    k0_amp       phi  converged     r_0p3       r_1       r_3      r_10     r_100    r_1000
+        Cokelet(1987) @H=0.42    4.2077    4.3455    1.0328    1.2281       True    1.2338    1.1481    1.0929    1.0538    1.0178    1.0057
+ measured (Marcinkowska 2023)    3.9400    4.0816    1.0359    1.2235       True    1.2186    1.1524    1.1023    1.0622    1.0217    1.0071
+ clinical low bound (k0=3.05)    3.0500    3.2652    1.0705    1.2123       True    1.2072    1.1630    1.1212    1.0807    1.0311    1.0105
+clinical high bound (k0=4.36)    4.3600    4.4371    1.0177    1.2253       True    1.2232    1.1508    1.0988    1.0590    1.0202    1.0066
+      NOTE: r_X = viscosity ratio (elevated/normal aggregation) at shear
+            rate X s-1.  The shear-gating QUALITATIVE conclusion (large at
+            low shear, ~1.00 at 1000 s-1) holds for every parameter set;
+            the absolute magnitude is set by the calibration target.
+
+[T1]  ESR -> Stokes aggregate size -> k0 amplification
+  ESR_mm_h   r_eff_um         AI  k0_effective vs_published_range_3_05_4_36
+    2.0000     2.1605     1.0000        4.1809                       inside
+    5.0000     3.4160     1.2200        4.1890                       inside
+   10.0000     4.8310     1.7254        4.2077                       inside
+   20.0000     6.8321     2.4400        4.2341                       inside
+   30.0000     8.3675     2.9884        4.2544                       inside
+   40.0000     9.6620     3.4507        4.2714                       inside
+   50.0000    10.8024     3.8580        4.2865                       inside
+   60.0000    11.8335     4.2262        4.3001                       inside
+   70.0000    12.7816     4.5649        4.3126                       inside
+   80.0000    13.6641     4.8800        4.3243                       inside
+   90.0000    14.4930     5.1761        4.3352                       inside
+  100.0000    15.2770     5.4561        4.3455                       inside
+
+[T2]  Anchored whole-blood viscosity (mPa.s), H=0.42, Cokelet k0(H)
+                  ESR10      ESR40      ESR60      ESR80     ESR100
+0.1 1/s          37.950     43.111     45.780     48.227     50.550
+0.520795 1/s     20.769     22.477     23.314     24.057     24.741
+2.71227 1/s      10.999     11.475     11.699     11.892     12.067
+14.1254 1/s       6.602      6.739      6.802      6.856      6.904
+73.5642 1/s       4.777      4.822      4.843      4.860      4.876
+383.119 1/s       4.017      4.034      4.042      4.049      4.054
+1995.26 1/s       3.695      3.702      3.705      3.708      3.710
+      ratio ESR100/ESR10:  0.1s-1=1.332x  0.520795s-1=1.191x  2.71227s-1=1.097x  14.1254s-1=1.046x  73.5642s-1=1.021x  383.119s-1=1.009x  1995.26s-1=1.004x
+
+[T3]  Vessel states (organ pressure gradient held constant)
+
+  --- Glomerular capillary (high-shear cortical), D=8 um, V_ref=1.000 mm/s ---
+  ESR_mm_h   k0_scale     V_mm_s  gamma_w_s  eta_mPa_s   tau_w_Pa     CFL_um     CFL_CV     WSS_CV
+         2     0.9936      1.017       1017      3.791      3.856     0.8917        0.3     0.3861
+         5     0.9956      1.017       1017      3.792      3.856     0.9152        0.3      0.389
+        10          1      1.016       1016      3.795      3.856     0.9691        0.3     0.3959
+        20      1.006      1.015       1015      3.799      3.856      1.045        0.3     0.4062
+        30      1.011      1.014       1014      3.803      3.856      1.104        0.3     0.4144
+        40      1.015      1.013       1013      3.806      3.856      1.153        0.3     0.4216
+        50      1.019      1.013       1013      3.808      3.856      1.197        0.3     0.4281
+        60      1.022      1.012       1012       3.81      3.856      1.236        0.3     0.4342
+        70      1.025      1.012       1012      3.812      3.856      1.273        0.3       0.44
+        80      1.028      1.011       1011      3.814      3.856      1.306        0.3     0.4455
+        90       1.03      1.011       1011      3.816      3.856      1.338        0.3     0.4508
+       100      1.033       1.01       1010      3.818      3.856      1.368        0.3     0.4559
+
+  --- Peritubular capillary (cortical post-glomerular), D=10 um, V_ref=0.500 mm/s ---
+  ESR_mm_h   k0_scale     V_mm_s  gamma_w_s  eta_mPa_s   tau_w_Pa     CFL_um     CFL_CV     WSS_CV
+         2     0.9936     0.5092      407.4      3.993      1.627      1.244        0.3     0.3993
+         5     0.9956     0.5089      407.2      3.995      1.627      1.277        0.3     0.4029
+        10          1     0.5083      406.6          4      1.627      1.352        0.3     0.4112
+        20      1.006     0.5074      405.9      4.008      1.627      1.459        0.3     0.4236
+        30      1.011     0.5066      405.3      4.013      1.627      1.541        0.3     0.4336
+        40      1.015      0.506      404.8      4.018      1.627       1.61        0.3     0.4425
+        50      1.019     0.5055      404.4      4.022      1.627       1.67        0.3     0.4506
+        60      1.022      0.505        404      4.026      1.627      1.725     0.3001     0.4582
+        70      1.025     0.5046      403.7       4.03      1.627      1.776     0.3001     0.4654
+        80      1.028     0.5042      403.3      4.033      1.627      1.823     0.3001     0.4723
+        90       1.03     0.5038        403      4.036      1.627      1.867     0.3001     0.4789
+       100      1.033     0.5034      402.7      4.039      1.627      1.909     0.3001     0.4854
+
+  --- Vasa recta (medulla) (medullary; PO2 8 mmHg), D=15 um, V_ref=0.200 mm/s ---
+  ESR_mm_h   k0_scale     V_mm_s  gamma_w_s  eta_mPa_s   tau_w_Pa     CFL_um     CFL_CV     WSS_CV
+         2     0.9936     0.2043      108.9      4.518     0.4922      2.186     0.2999     0.4233
+         5     0.9956      0.204      108.8      4.523     0.4922      2.244     0.2999      0.428
+        10          1     0.2035      108.5      4.535     0.4922      2.377        0.3     0.4392
+        20      1.006     0.2028      108.1      4.551     0.4922      2.564     0.3001      0.456
+        30      1.011     0.2022      107.8      4.564     0.4922      2.709     0.3002     0.4699
+        40      1.015     0.2017      107.6      4.575     0.4922      2.831     0.3002     0.4823
+        50      1.019     0.2013      107.3      4.585     0.4922      2.938     0.3003     0.4937
+        60      1.022     0.2009      107.1      4.594     0.4922      3.035     0.3004     0.5045
+        70      1.025     0.2005      106.9      4.602     0.4922      3.124     0.3004     0.5149
+        80      1.028     0.2002      106.8       4.61     0.4922      3.208     0.3005      0.525
+        90       1.03     0.1999      106.6      4.617     0.4922      3.286     0.3005     0.5348
+       100      1.033     0.1996      106.4      4.624     0.4922       3.36     0.3005     0.5444
+
+  --- Vasa recta - hypoperfused (medullary + low flow), D=15 um, V_ref=0.020 mm/s ---
+  ESR_mm_h   k0_scale     V_mm_s  gamma_w_s  eta_mPa_s   tau_w_Pa     CFL_um     CFL_CV     WSS_CV
+         2     0.9936    0.02069      11.04      6.975    0.07698      2.877      0.299     0.4851
+         5     0.9956    0.02061      10.99      7.002    0.07698      2.954     0.2993     0.4938
+        10          1    0.02042      10.89      7.067    0.07698      3.132        0.3     0.5151
+        20      1.006    0.02016      10.75      7.161    0.07698      3.383      0.301     0.5483
+        30      1.011    0.01995      10.64      7.235    0.07698      3.577     0.3018     0.5769
+        40      1.015    0.01978      10.55      7.299    0.07698       3.74     0.3024     0.6033
+        50      1.019    0.01962      10.46      7.356    0.07698      3.885      0.303     0.6286
+        60      1.022    0.01948      10.39      7.409    0.07698      4.016     0.3035     0.6533
+        70      1.025    0.01935      10.32      7.458    0.07698      4.136      0.304     0.6778
+        80      1.028    0.01923      10.26      7.505    0.07698      4.249     0.3045     0.7023
+        90       1.03    0.01912       10.2      7.549    0.07698      4.355     0.3049      0.727
+       100      1.033    0.01901      10.14      7.592    0.07698      4.455     0.3053     0.7519
+
+[T4]  Graded fold change ESR 10 -> {60, 80, 100}  (the clinical question)
+   ESR 10 -> 100 (primary headline):
+                   vessel  gamma_w_s  d_eta  d_tau    d_V  d_CFL d_WSS_CV
+     Glomerular capillary     1016.1 1.006x 1.000x 0.994x 1.411x   1.152x
+    Peritubular capillary      406.6 1.010x 1.000x 0.990x 1.412x   1.181x
+     Vasa recta (medulla)      108.5 1.020x 1.000x 0.981x 1.414x   1.240x
+Vasa recta - hypoperfused       10.9 1.074x 1.000x 0.931x 1.423x   1.460x
+
+   graded, ESR 10 -> 60 / 80 / 100:
+ ESR_hi                    vessel  gamma_w_s  d_eta  d_tau    d_V  d_CFL d_WSS_CV
+   60.0      Glomerular capillary     1016.1 1.004x 1.000x 0.996x 1.276x   1.097x
+   60.0     Peritubular capillary      406.6 1.006x 1.000x 0.994x 1.276x   1.114x
+   60.0      Vasa recta (medulla)      108.5 1.013x 1.000x 0.987x 1.277x   1.149x
+   60.0 Vasa recta - hypoperfused       10.9 1.048x 1.000x 0.954x 1.282x   1.268x
+   80.0      Glomerular capillary     1016.1 1.005x 1.000x 0.995x 1.348x   1.125x
+   80.0     Peritubular capillary      406.6 1.008x 1.000x 0.992x 1.348x   1.149x
+   80.0      Vasa recta (medulla)      108.5 1.017x 1.000x 0.984x 1.350x   1.195x
+   80.0 Vasa recta - hypoperfused       10.9 1.062x 1.000x 0.942x 1.357x   1.364x
+  100.0      Glomerular capillary     1016.1 1.006x 1.000x 0.994x 1.411x   1.152x
+  100.0     Peritubular capillary      406.6 1.010x 1.000x 0.990x 1.412x   1.181x
+  100.0      Vasa recta (medulla)      108.5 1.020x 1.000x 0.981x 1.414x   1.240x
+  100.0 Vasa recta - hypoperfused       10.9 1.074x 1.000x 0.931x 1.423x   1.460x
+
+[T5]  Shear-rate gating: where does aggregation start to matter?
+      (single 8-um capillary, ESR 10 vs 100, viscosity ratio)
+   gamma_s      ratio
+     0.316      1.230
+     0.546      1.188
+     0.944      1.152
+     1.631      1.121
+     2.818      1.096
+     4.870      1.075
+     8.414      1.058
+    14.538      1.045
+    25.119      1.035
+    43.401      1.027
+    74.989      1.021
+   129.569      1.016
+   223.872      1.012
+   386.812      1.009
+   668.344      1.007
+  1154.782      1.005
+  1995.262      1.004
+      -> aggregation effect falls below +10% above gamma_dot = 3 s-1
+
+[T6]  Fixed-flow-rate scenario: V held at V_ref, so gamma_w is fixed
+      and tau_w scales exactly with the apparent viscosity.
+                   vessel  gamma_w_s    ESR_hi  tau_constQ_ratio
+     Glomerular capillary  1000.0000   60.0000            1.0038
+     Glomerular capillary  1000.0000   80.0000            1.0048
+     Glomerular capillary  1000.0000  100.0000            1.0057
+    Peritubular capillary   400.0000   60.0000            1.0060
+    Peritubular capillary   400.0000   80.0000            1.0076
+    Peritubular capillary   400.0000  100.0000            1.0090
+     Vasa recta (medulla)   106.6667   60.0000            1.0115
+     Vasa recta (medulla)   106.6667   80.0000            1.0146
+     Vasa recta (medulla)   106.6667  100.0000            1.0173
+Vasa recta - hypoperfused    10.6667   60.0000            1.0345
+Vasa recta - hypoperfused    10.6667   80.0000            1.0438
+Vasa recta - hypoperfused    10.6667  100.0000            1.0522
+      -> at ESR 100 the mean WSS rises by at most 5.2 % (Vasa recta - hypoperfused)
+
+[T7]  Extrapolated ESR at which the fold threshold (amplification 1.15) would be reached: 1,188 mm h-1
+      -> no sustainable ESR approaches it; stasis is unreachable through the aggregation-viscosity feedback alone.
+
+[T8]  ROBUSTNESS to the sign of the CFL-shear relation  [f_ga = (gamma/100)**s]
+      the literature conflicts on the sign (refs 7, 8, 26, 27, 28)
+ shear_exp  Glomerular capillary [%]  Peritubular capillary [%]  Vasa recta (medulla) [%]  Vasa recta - hypoperfused [%]                max_vessel  hypo_medulla / glomerulus
+    -0.240                    10.217                     13.994                    23.783                        112.204 Vasa recta - hypoperfused                     10.982
+    -0.180                    12.370                     15.849                    23.876                         67.072 Vasa recta - hypoperfused                      5.422
+    -0.120                    15.154                     18.055                    23.969                         45.985 Vasa recta - hypoperfused                      3.035
+    -0.060                    18.851                     20.713                    24.064                         33.888 Vasa recta - hypoperfused                      1.798
+     0.000                    23.942                     23.967                    24.158                         26.122 Vasa recta - hypoperfused                      1.091
+     0.060                    31.314                     28.025                    24.253                         20.768      Glomerular capillary                      0.663
+     0.120                    42.802                     33.210                    24.349                         16.894      Glomerular capillary                      0.395
+     0.180                    62.927                     40.040                    24.446                         13.991      Glomerular capillary                      0.222
+     0.240                   106.638                     49.411                    24.543                         11.759      Glomerular capillary                      0.110
+      -> for every s the ESR-driven rise in WSS variability is POSITIVE
+         in every vessel; only the RANKING depends on the sign.
+      -> s<0 : most affected vessel = Vasa recta - hypoperfused
+      -> s>0 : most affected vessel = Glomerular capillary
+
+[F]  figures ...

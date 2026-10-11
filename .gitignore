@@ -1,0 +1,23 @@
+# --- Python ---------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# --- Editors / OS ---------------------------------------------------------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Regenerable artefacts ------------------------------------------------
+# Press-quality TIFFs are produced by the figure stage but only the PNG record
+# is tracked; TIFFs can be regenerated with ./reproduce.sh
+*.tif
+*.bak
+*.orig
+*.tmp

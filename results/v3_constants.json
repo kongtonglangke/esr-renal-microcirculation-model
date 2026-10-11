@@ -1,0 +1,15 @@
+{
+  "source": "Higuchi M, Watanabe N. PLoS ONE 2022;17(7):e0270977 (PMID 35819942)",
+  "rho_e_kg_m3": 1100.0,
+  "rho_p_kg_m3": 1025.0,
+  "R_ef_m": 3.084e-06,
+  "mu_p_Pa_s": 0.00164,
+  "a_eq16": 0.0541,
+  "b_eq16": 0.426,
+  "k_eq15": 0.284,
+  "n_hindered": 4.65,
+  "westergren_slope": 0.778,
+  "c_no_aggregation_m_s": 9.482058878048781e-07,
+  "fitted_exponent_q": 0.5000000000000002,
+  "max_dev_from_sqrt_law_pct": 1.2034302019102645e-13
+}

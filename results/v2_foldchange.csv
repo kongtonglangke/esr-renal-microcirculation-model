@@ -1,0 +1,5 @@
+vessel,gamma_w_s,d_eta,d_tau,d_V,d_CFL,d_WSS_CV
+Glomerular capillary,1016.1,1.006x,1.000x,0.994x,1.411x,1.152x
+Peritubular capillary,406.6,1.010x,1.000x,0.990x,1.412x,1.181x
+Vasa recta (medulla),108.5,1.020x,1.000x,0.981x,1.414x,1.240x
+Vasa recta - hypoperfused,10.9,1.074x,1.000x,0.931x,1.423x,1.460x

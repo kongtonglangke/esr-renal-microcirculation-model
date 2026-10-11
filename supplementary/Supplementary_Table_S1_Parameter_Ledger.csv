@@ -1,0 +1,43 @@
+﻿model_layer,parameter,value,unit,evidence_tier,source
+Layer 1,rbc_density_rho_e,1100,kg/m3,measured,"Higuchi & Watanabe 2022 (PMID 35819942), their ref 33"
+Layer 1,plasma_density_rho_p,1025,kg/m3,measured,"Higuchi & Watanabe 2022, their ref 34"
+Layer 1,effective_rbc_radius_R_ef,3.084e-6,m,measured,"Higuchi & Watanabe 2022, their ref 13"
+Layer 1,plasma_viscosity_mu_p,1.64e-3,Pa.s,measured,"Higuchi & Watanabe 2022, their ref 35"
+Layer 1,eq16_coefficient_a,0.0541,m/s,measured (fitted),"Higuchi & Watanabe 2022, Eq 16"
+Layer 1,eq16_min_physiological_HAI_b,0.426,-,measured (fitted),"Higuchi & Watanabe 2022, Eq 16"
+Layer 1,haematocrit_correction_k,0.284,per unit Ht,measured,"Higuchi & Watanabe 2022, Eq 15"
+Layer 1,westergren_velocity_slope,0.778,-,measured,"Higuchi & Watanabe 2022 (r=0.990, n=32)"
+Layer 1,hindered_settling_exponent_n,4.65,-,literature,"Richardson & Zaki 1954, via Higuchi 2022"
+Layer 1,esr_reference,10,mm/h,modelling choice,"reference (""healthy"") ESR at which the k0 amplification is set to unity"
+Layer 1,esr_simulated_range,10-100,mm/h,modelling choice,range evaluated throughout the study; spans the normal range to the extreme values seen in nephrotic syndrome and severe systemic inflammation
+Layer 1,esr_calibration_anchor,100,mm/h,modelling choice,ESR at which the inverse-calibrated k0 amplification (1.033x) is assumed to be attained. Anchoring it at the top of the simulated range keeps every modelled k0 inside the published clinical interval 3.05-4.36; anchoring it at 60 mm/h would push k0 above 4.36 for every ESR above 60 and would extrapolate the constitutive law beyond measured physiology. The headline WSS-variability result is insensitive to this choice (Section 4.6).
+Layer 1,esr_clinical_reference,80,mm/h,modelling choice,clinically salient ESR reported as a named point in Tables 3 and 6; not a threshold in the model
+Layer 2,quemada_k0_measured,3.94,-,measured,Marcinkowska-Gapinska 2023 (PMID 36767344)
+Layer 2,quemada_k_inf_measured,1.71,-,measured,Marcinkowska-Gapinska 2023
+Layer 2,quemada_gamma_c_measured,6.0,1/s,measured,Marcinkowska-Gapinska 2023
+Layer 2,plasma_viscosity_clinical,1.32,mPa.s,measured,Marcinkowska-Gapinska 2023
+Layer 2,quemada_k0_at_H_0.42,4.208,-,modelling choice,Cokelet haematocrit-dependent parameterisation
+Layer 2,tube_haematocrit_H,0.42,-,modelling choice,best fit to published curve (reported 0.44 +/- 0.01)
+Layer 2,clinical_k0_range_low,3.05,-,measured,Marcinkowska-Gapinska 2023 (literature range)
+Layer 2,clinical_k0_range_high,4.36,-,measured,Marcinkowska-Gapinska 2023 (literature range)
+Calibration,target_lowshear_viscosity_increment,+41,%,measured,"McGinley 1983 (PMID 6410531), nephrotic syndrome"
+Calibration,target_highshear_viscosity_increment,+25,%,measured,McGinley 1983
+Calibration,solved_plasma_viscosity_multiple_phi,1.228,-,model output,inverse calibration
+Calibration,solved_k0_amplification,1.033,x,model output,inverse calibration
+Layer 3,glomerular_capillary_diameter,8,um,literature,standard renal microvascular geometry
+Layer 3,peritubular_capillary_diameter,10,um,literature,standard renal microvascular geometry
+Layer 3,vasa_recta_diameter,15,um,literature,reported range 12-18 um
+Layer 3,vasa_recta_reference_velocity,0.20,mm/s,modelling choice,medullary slow flow
+Layer 3,vasa_recta_hypoperfused_velocity,0.02,mm/s,modelling choice,represents reduced medullary perfusion
+Layer 3,glomerular_reference_velocity,1.00,mm/s,modelling choice,cortical high-shear reference
+Layer 3,peritubular_reference_velocity,0.50,mm/s,modelling choice,cortical post-glomerular reference
+Layer 4,wss_cv_baseline,0.30,-,assumption,"ASSUMPTION, not a measurement. Adopted as the mid-point (0.30) of the 0.2-0.6 in vivo baseline coefficient of variation of the cell-free layer reported across the small arteriolar studies below; the absolute baseline scales the whole variability term uniformly and is the largest single uncertainty of Layer 4 after the sign of Equation (7a). Sources for the underlying variation: Ong 2011 (PMID 21345341); Namgung 2011 (PMID 20652744); Kim 2006 (PMID 16627362)."
+Layer 4,wss_cv_low_shear_gate,20,1/s,assumption,"shear-gate half-width of Equation (9), gamma_dot_s. The gate is anchored to a measured effect: dextran-induced aggregation significantly elevated cell-free-layer width variability (quantified as the coefficient of variation) at a low pseudoshear rate of 9.2 +/- 0.6 1/s, with no such effect at moderate or high shear rates (Namgung 2011, PMID 20652744; Ong 2011, PMID 21345341)."
+Layer 4,wss_cv_aggregation_sensitivity_dCV,0.22,-,assumption,"additional cell-free-layer variability at an aggregation amplification of 2, scaled by the shear gating of Ong 2011 (PMID 21345341)"
+Layer 4,wss_cv_gate_exponent_n,1.5,-,assumption,"exponent of the shear gate in Equation (9), CV_delta = CV0 + dCV*(A-1)*[1 + (gamma_dot/gamma_dot_s)**n]**-1. ASSUMPTION: the gate shape was chosen so that the predicted gating reproduces the observed confinement of the aggregation effect to low shear rates (Namgung 2011, PMID 20652744); it was not fitted to the vessel results."
+Layer 4,wss_cv_measured_gate_anchor,9.2,1/s,measured,"pseudoshear rate (9.2 +/- 0.6 1/s) at which dextran-induced red-cell aggregation significantly raised cell-free-layer width variability (p<0.01), Namgung 2011 (PMID 20652744); this measured value is the anchor of the Eq-(9) gate."
+Layer 4,cfl_baseline_fraction_delta_over_D,0.16,-,modelling choice,"proportionality of the baseline layer width to vessel diameter, delta0 = 0.16*D, Equation (7a). MODELLING CHOICE, not a measurement: the fractional coefficient was selected so that the absolute layer width falls inside the measured band 0.8-3.1 um over 10-50 um vessels (Kim 2006, PMID 16627362). For the vessel diameters used here (8, 10 and 15 um) it gives base widths of 1.28, 1.60 and 2.40 um; a hard floor of 0.25 um and ceiling of 2.5 um are applied in code so that the two-layer construction never exceeds a plausible fraction of the lumen. The coefficient sets the ABSOLUTE magnitude of the geometric factor D/(D-2*delta) and hence the magnitude of the reported excess, but not its sign structure."
+Layer 4,cfl_aggregation_coefficient,0.11,per AI unit,modelling choice,axial-accumulation effect of aggregation on the cell-free layer; direction anchored to Suzuki 1996 (PMID 8923151) and Maeda 1996 (PMID 8997305)
+Layer 4,cfl_shear_exponent,-0.12,-,assumption,"delta proportional to the shear rate raised to this power, i.e. delta = d0(D)*f_A(A)*(gamma_dot/100)**s, Equation (7a) of the manuscript. The SIGN of s is NOT SETTLED in the literature, and this is the single constitutive quantity in the model for which a sign cannot be fixed from measurement: Suzuki 1996 (PMID 8923151) reports a thicker layer at HIGHER flow velocity (s>0); Kim/Ong 2010 (PMID 20348228) report a thicker layer at REDUCED flow combined with aggregation (s<0); Liao & Chen 2019 (PMID 31768201) report a non-monotonic dependence, negative below and positive above an intermediate shear rate; Salame & Fenech 2025 (PMID 40846133) report the positive sign in plasma and the negative sign in a non-aggregating medium. The main analysis uses s=-0.12. Section 3.7 reports the vessel ranking for s from -0.24 to +0.24: the existence of the ESR-driven rise in WSS variability is independent of the sign, but the most-affected vessel is not (hypoperfused vasa recta for s<0, glomerular capillary for s>0, crossover at s approx +0.02). Listed as an assumption, not a measurement."
+Layer 4,cfl_shear_exponent_scanned_range,-0.24 to +0.24,-,analysis choice,range swept in Section 3.7 / Figure 6d; brackets every sign reported in the literature
+Layer 4,core_haematocrit_closure,mass conservation,-,modelling choice,two-layer core/CFL construction

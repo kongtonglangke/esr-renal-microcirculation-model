@@ -1,0 +1,29 @@
+{
+  "python": "3.13.14",
+  "numpy": "2.5.2",
+  "scipy": "1.18.1",
+  "pandas": "3.0.5",
+  "matplotlib": "3.11.1",
+  "model_version": "0.2.0",
+  "solved_phi": 1.228104113962042,
+  "solved_k0_high": 4.345532904361658,
+  "k0_normal": 4.207695270050117,
+  "H_tube": 0.42,
+  "esr_normal": 10.0,
+  "esr_high": 100.0,
+  "esr_clinical": 80.0,
+  "cfl_shear_exponent": -0.12,
+  "cfl_shear_exponent_scan": [
+    -0.24,
+    -0.18,
+    -0.12,
+    -0.06,
+    0.0,
+    0.06,
+    0.12,
+    0.18,
+    0.24
+  ],
+  "esr_at_fold_threshold_mm_h": 1188.3186508564795,
+  "run_utc": "2026-10-11T09:08:23.045946+00:00"
+}

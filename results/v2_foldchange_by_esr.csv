@@ -1,0 +1,13 @@
+ESR_hi,vessel,gamma_w_s,d_eta,d_tau,d_V,d_CFL,d_WSS_CV
+60.0,Glomerular capillary,1016.1,1.004x,1.000x,0.996x,1.276x,1.097x
+60.0,Peritubular capillary,406.6,1.006x,1.000x,0.994x,1.276x,1.114x
+60.0,Vasa recta (medulla),108.5,1.013x,1.000x,0.987x,1.277x,1.149x
+60.0,Vasa recta - hypoperfused,10.9,1.048x,1.000x,0.954x,1.282x,1.268x
+80.0,Glomerular capillary,1016.1,1.005x,1.000x,0.995x,1.348x,1.125x
+80.0,Peritubular capillary,406.6,1.008x,1.000x,0.992x,1.348x,1.149x
+80.0,Vasa recta (medulla),108.5,1.017x,1.000x,0.984x,1.350x,1.195x
+80.0,Vasa recta - hypoperfused,10.9,1.062x,1.000x,0.942x,1.357x,1.364x
+100.0,Glomerular capillary,1016.1,1.006x,1.000x,0.994x,1.411x,1.152x
+100.0,Peritubular capillary,406.6,1.010x,1.000x,0.990x,1.412x,1.181x
+100.0,Vasa recta (medulla),108.5,1.020x,1.000x,0.981x,1.414x,1.240x
+100.0,Vasa recta - hypoperfused,10.9,1.074x,1.000x,0.931x,1.423x,1.460x

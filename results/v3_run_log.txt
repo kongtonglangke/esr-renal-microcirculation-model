@@ -1,0 +1,79 @@
+====================================================================================
+ESR -> renal microcirculation : MEASURED Layer-1 mapping   v0.3.0
+====================================================================================
+
+[1] Literature constants used for the Layer-1 replacement
+    rho_e  = 1100 kg/m^3   rho_p = 1025 kg/m^3   (Higuchi refs 33,34)
+    R_ef   = 3.0840e-06 m        mu_p  = 1.64 mPa.s (Higuchi refs 13,35)
+    c (no-aggregation V_s, eq 2) = 9.4821e-07 m/s = 0.9482 um/s
+    eq15  HAI = AI - 0.284(Ht - 0.40)
+    eq16  V_s = 0.0541(HAI - 0.426)^4 + c
+    hindered settling exponent n = 4.65 ; Westergren slope = 0.778
+
+[2] MEASURED Layer-1 mapping (Higuchi 2022), Ht = 0.40
+ ESR_mm_h   V_e_um_s   V_s_um_s        HAI  alpha_measured  R_agg_um_measured
+        2     0.4322     4.6484     0.5169          1.2141             6.8283
+        5     1.0806    11.6210     0.5445          2.5008            10.7965
+       10     2.1611    23.2420     0.5685          3.9509            15.2686
+       20     4.3222    46.4840     0.5963          6.0017            21.5931
+       30     6.4833    69.7260     0.6148          7.5752            26.4460
+       40     8.6444    92.9681     0.6291          8.9018            30.5373
+       60    12.9667   139.4521     0.6509         11.1272            37.4003
+       80    17.2889   185.9361     0.6678         13.0033            43.1862
+      100    21.6111   232.4202     0.6818         14.6562            48.2836
+
+[3] Is the sqrt(ESR) scaling an assumption, or is it what the data imply?
+    power-law fit  (1+alpha) ~ ESR^q  ->  q = 0.5000
+    reference assumption in v0.2.0        q = 0.5000
+    maximum deviation of the measured mapping from a pure sqrt law: 0.00 %
+    HONEST READING - this is an ALGEBRAIC IDENTITY, not an independent
+    validation.  Every step of the chain is linear or proportional:
+      V_s = c (1+alpha)^2         (Stokes, single aggregate)
+      V_s ~ ESR                   (Westergren relation, measured, r=0.990)
+      =>  (1+alpha) ~ sqrt(ESR)   identically.
+    What the replacement therefore achieves is NOT a new numerical result
+    but a CHANGE IN EPISTEMIC STATUS: the sqrt(ESR) scaling is no longer a
+    free assumption; it follows from Stoke's law together with the
+    measured near-linear Westergren relation.  The empirical content sits
+    in the Westergren linearity (r = 0.990, n = 32), which is measurable
+    and falsifiable.  We state this plainly rather than presenting a
+    tautological '0 % deviation' as if it were a validation.
+
+[4] Relative aggregate-size change, measured vs the v0.2.0 sqrt law
+ ESR_mm_h  R_agg_ratio_measured  R_agg_ratio_sqrt_law     pct_diff
+        2               0.44721               0.44721      0.00000
+        5               0.70711               0.70711      0.00000
+       10               1.00000               1.00000      0.00000
+       20               1.41421               1.41421      0.00000
+       30               1.73205               1.73205      0.00000
+       40               2.00000               2.00000      0.00000
+       60               2.44949               2.44949      0.00000
+       80               2.82843               2.82843      0.00000
+      100               3.16228               3.16228      0.00000
+
+[5] Ht sensitivity of the INFERRED aggregation (Higuchi eq 15)
+    Eq 15 states  HAI = AI - k (Ht - 0.40), i.e.  AI = HAI + k (Ht - 0.40).
+    If an uncorrected AI is read as though it were the HAI, the inferred
+    aggregation state is biased by k*dHt, and V_s responds as the 4th
+    power of (HAI - b).  At a typical elevated state this is large:
+    delta_Ht           Ht    HAI_naive  V_s_bias_factor     pct_bias
+      0.0000       0.4000       0.5686           1.0000       0.0000
+      0.0200       0.4200       0.5743           1.1691      16.9101
+      0.0500       0.4500       0.5828           1.4619      46.1861
+      0.0800       0.4800       0.5913           1.8064      80.6440
+    -> a patient with Ht 0.45 whose uncorrected aggregation index is read
+       as the corrected value will have their aggregation state OVER-
+       estimated by about +40-45 %.  This quantitatively supports Sec. 3.7
+       of the manuscript ("ESR alone under-determines the rheology") and
+       identifies haematocrit, not ESR, as the missing covariate.
+
+[6] Does the vessel-level conclusion change when Layer 1 is measured?
+    The ONLY quantity that entered the vessel calculation from Layer 1 was
+    the RELATIVE aggregate-size change ESR60/ESR10:
+      measured mapping : 2.4495
+      v0.2.0 sqrt law  : 2.4495
+    they agree to 0.000 %,
+    so every vessel-level number in the manuscript is unchanged.  Reported
+    honestly: this upgrade strengthens the METHODS, not the numbers.
+
+[F] figure -> figures/ms_fig6_layer1_measured.png

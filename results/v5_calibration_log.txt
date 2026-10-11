@@ -1,0 +1,29 @@
+==============================================================================
+Supplementary Note S1  --  inverse calibration, written out
+==============================================================================
+[source] McGinley 1983 (PMID 6410531) indexed abstract text:
+    Blood viscosity and its major determinants (haematocrit, plasma viscosity and fibrinogen) as well as several haemostatic variables were measured in 21 patients with the nephrotic syndrome, and 21 controls matched for age, sex, smoking habit and serum creatinine. Blood viscosity was significantly increased in the nephrotic group, measured at a low shear rate (mean increase 41%, p less than 0.01) and at a high shear rate (mean increase 25%, p less than 0.01). Haematocrit was not significantly increased, but plasma viscosity was significantly higher (p less than 0.01), associated with increased plasma macroglobulins especially fibrinogen, which was increased to double the plasma concentration of the control group (p less than 0.01). Nephrotic subjects also had increased plasma levels of alpha 2-macroglobulin, factor VIII activity, factor VIII antigen and beta-thromboglobulin; differences in antithrombin III, fibrin degradation products, plasminogen, and platelet count were not significant. We suggest that increased blood and plasma viscosity may play a role in the vascular complications of the nephrotic syndrome.
+
+fixed constants at H = 0.42:  k0 = 4.2077,  k_inf = 1.8157,  gamma_c = 3.7997 s-1,  eta_p = 1.300 mPa.s
+
+[central solution]  phi = 1.2281   k0_high = 4.3455   amplification = 1.0328x   (ier=1)
+
+[sensitivity] recovered (phi, amplification) vs the two target increments
+    phi          range over +/-10 pp : 1.107 - 1.356
+    amplification range over +/-10 pp : 0.991 - 1.071
+    rows with recovered k0 outside the published clinical range [3.05, 4.36]: 10/25
+
+[one-at-a-time]  +/-10 pp on the low-shear target only
+    low target 1.31x -> phi = 1.241, amplification = 1.013x
+    low target 1.41x -> phi = 1.228, amplification = 1.033x
+    low target 1.51x -> phi = 1.216, amplification = 1.050x
+[one-at-a-time]  +/-10 pp on the high-shear target only
+    high target 1.15x -> phi = 1.117, amplification = 1.054x
+    high target 1.25x -> phi = 1.228, amplification = 1.033x
+    high target 1.35x -> phi = 1.341, amplification = 1.012x
+
+NOTE  The gating of the aggregation effect (Section 3.3) does not depend on
+      these two numbers: it follows from the functional form of the Quemada
+      law.  Only the ABSOLUTE magnitude of the low-shear viscosity increment
+      is set by the calibration, and that magnitude is what the ranges above
+      bound.

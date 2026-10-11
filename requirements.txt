@@ -1,0 +1,14 @@
+# Python dependencies for the ESR renal-microcirculation reduced-order model.
+# The first four packages are required to reproduce every number and figure in
+# the paper; the exact versions below are the ones used for the published
+# results (pipeline is deterministic, so these pins reproduce them bit-for-bit
+# except for the run timestamps).
+numpy==2.5.2
+scipy==1.18.1
+pandas==3.0.5
+matplotlib==3.11.1
+
+# Optional - only needed for the manuscript build helpers (code/utils/) and for
+# one structural check inside the QC scripts.
+python-docx==1.2.0
+Pillow==10.4.0

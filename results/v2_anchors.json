@@ -1,0 +1,15 @@
+{
+  "quemada_1977": "Quemada D. Rheol Acta 1977;16:82-94. (viscosity model)",
+  "cokelet_1987": "Cokelet GR. The rheology of human blood. In: Biomechanics: Mechanical Properties of Living Tissues, 1987. k0,k_oo,gc as functions of Hct",
+  "marcinkowska_2023": "Marcinkowska-Gapinska A et al. Int J Environ Res Public Health 2023;20:1977. Table 1: Hct=0.44, eta_p=1.32 mPa.s, k0=3.94, k_oo=1.71, gc=6.0; k0 range across literature controls 3.05-4.36; gamma_c 1.53-15.16",
+  "mcginley_1984": "McGinley E et al. J Clin Pathol 1984 (PMID 6410531). Nephrotic syndrome: blood viscosity +41% at low shear, +25% at high shear; fibrinogen doubled.  -> CALIBRATION TARGET",
+  "sarszegi_1997": "Sarszegi Z et al. Am J Kidney Dis 1997;29(4); MED SCI MONITOR ID 503328. IgA nephropathy n=57: plasma viscosity p<0.001 and RBC aggregation p<0.05 significantly higher than controls",
+  "cattran_1988": "Blood rheology in IgA nephropathy. PMID 3396231. Whole blood viscosity, RBC deformability and plasma viscosity all significantly altered; abnormal rheology proposed as causal",
+  "higuchi_2022": "Higuchi M, Watanabe N. PLoS ONE 2022;17(7):e0270977. Hematocrit-corrected aggregation index (HAI) -> ESR, R=0.966",
+  "biesiada_2006": "Biesiada G et al. Clin Hemorheol Microcirc 2006;34(3):383-390. LORCA: control ESR 6.1 mm/h / AI 64.6%; patients ESR 45.4 / AI 70.0%; fibrinogen 3.8 -> 7.8 g/L",
+  "suzuki_1996": "Suzuki Y et al. PMID 8923151. CFL thickness INCREASES with accelerating erythrocyte aggregation, in both microvessels and glass capillaries (10-50 um)",
+  "kim_2006": "Kim S, Kong RL, Popel AS, Intaglietta M, Johnson PC. Microcirculation 2006 (PMID 16627362). CFL width in arterioles/venules, dextran-500 induced aggregation; rapid temporal variations",
+  "ong_2010": "Ong PK et al. Ann Biomed Eng / PMC3010219. Effect of CFL variation on arteriolar WSS: aggregation significantly increased CFL VARIABILITY only at 9.2 +/- 0.6 s-1 (not at 47.9 or 182.8 s-1); WSS 0.3-7.5 Pa; CFL variability ELEVATES WSS",
+  "ramaswamy_2023": "Renal Microcirculation Injury ... PMC9953191. 'In hypoperfusion, erythrocyte aggregation in the peritubular capillaries is the primary driver of the lesions'; peritubular network is highly branched with naturally slow flow",
+  "medulla": "Distribution of renal blood flow (Brezis/Rosen/Epstein data, Table 17.1): cortex 94% of RBF at 5.0 mL/min/g, medulla 6% at 0.03 mL/min/g  (167-fold lower); PO2 cortex 50 mmHg vs medulla 8 mmHg; medullary O2 extraction ratio 0.79. DVR diameter 12-18 um (PMC3846935)"
+}

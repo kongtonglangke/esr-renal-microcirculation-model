@@ -1,0 +1,24 @@
+# Normalise line endings so that the shell scripts and Python sources are
+# byte-identical on every platform.  Without this, a Windows checkout with
+# core.autocrlf=true rewrites reproduce.sh with CRLF and it stops running in
+# bash on Linux and macOS.
+* text=auto eol=lf
+
+*.sh      text eol=lf
+*.py      text eol=lf
+*.md      text eol=lf
+*.txt     text eol=lf
+*.csv     text eol=lf
+*.json    text eol=lf
+*.cff     text eol=lf
+*.yaml    text eol=lf
+*.yml     text eol=lf
+.gitignore text eol=lf
+
+# Binary artefacts - never touched
+*.png     binary
+*.tif     binary
+*.tiff    binary
+*.npy     binary
+*.npz     binary
+*.docx    binary

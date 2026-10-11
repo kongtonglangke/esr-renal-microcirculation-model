@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: "If you use this model, please cite the manuscript and this software repository."
+title: "ESR-renal-microcirculation-model: a reduced-order haemodynamic model of ESR-driven wall-shear-stress variability in the renal microcirculation"
+type: software
+version: "0.8"
+date-released: "2026-10-11"
+license: MIT
+repository-code: "https://github.com/kongtonglangke/esr-renal-microcirculation-model"
+url: "https://github.com/kongtonglangke/esr-renal-microcirculation-model"
+authors:
+  - family-names: Wang
+    given-names: Yan
+    affiliation: "Department of Nephrology, Affiliated Hospital of Gansu Medical College, Pingliang, Gansu, China"
+keywords:
+  - erythrocyte sedimentation rate
+  - haemodynamics
+  - haemorrhology
+  - erythrocyte aggregation
+  - renal microcirculation
+  - cell-free layer
+  - wall shear stress
+  - Quemada model
+  - reduced-order model
+  - computational modelling
+preferred-citation:
+  type: article
+  title: "One unresolved constitutive sign decides which renal microvessel an elevated erythrocyte sedimentation rate most loads: a reduced-order haemodynamic model"
+  authors:
+    - family-names: Wang
+      given-names: Yan
+      affiliation: "Department of Nephrology, Affiliated Hospital of Gansu Medical College, Pingliang, Gansu, China"
+  journal: "Clinical Hemorheology and Microcirculation"
+  year: 2026
