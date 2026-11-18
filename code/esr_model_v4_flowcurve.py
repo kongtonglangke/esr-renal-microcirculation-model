@@ -202,6 +202,8 @@ def main():
     b.set_ylabel(r"max $|d\ln\eta/d\ln\dot\gamma|$")
     b.set_title("(b)  fold criterion vs haematocrit", fontsize=9)
     b.legend(frameon=False, fontsize=6.6)
+    fig.suptitle("Figure 7  Pressure-flow curve and the absence of self-arresting stasis",
+                 fontsize=10.4, y=1.02)
     fig.tight_layout()
     fig.savefig(FIG / "ms_fig7_stasis.png", bbox_inches="tight")
     fig.savefig(FIG / "ms_fig7_stasis.tif", dpi=300, bbox_inches="tight")

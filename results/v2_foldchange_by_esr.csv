@@ -1,13 +1,21 @@
 ESR_hi,vessel,gamma_w_s,d_eta,d_tau,d_V,d_CFL,d_WSS_CV
-60.0,Glomerular capillary,1016.1,1.004x,1.000x,0.996x,1.276x,1.097x
-60.0,Peritubular capillary,406.6,1.006x,1.000x,0.994x,1.276x,1.114x
-60.0,Vasa recta (medulla),108.5,1.013x,1.000x,0.987x,1.277x,1.149x
-60.0,Vasa recta - hypoperfused,10.9,1.048x,1.000x,0.954x,1.282x,1.268x
-80.0,Glomerular capillary,1016.1,1.005x,1.000x,0.995x,1.348x,1.125x
-80.0,Peritubular capillary,406.6,1.008x,1.000x,0.992x,1.348x,1.149x
-80.0,Vasa recta (medulla),108.5,1.017x,1.000x,0.984x,1.350x,1.195x
-80.0,Vasa recta - hypoperfused,10.9,1.062x,1.000x,0.942x,1.357x,1.364x
-100.0,Glomerular capillary,1016.1,1.006x,1.000x,0.994x,1.411x,1.152x
-100.0,Peritubular capillary,406.6,1.010x,1.000x,0.990x,1.412x,1.181x
-100.0,Vasa recta (medulla),108.5,1.020x,1.000x,0.981x,1.414x,1.240x
-100.0,Vasa recta - hypoperfused,10.9,1.074x,1.000x,0.931x,1.423x,1.460x
+60.0,Glomerular capillary,1016.1,1.004x,1.000x,0.996x,1.151x,1.182x
+60.0,Peritubular capillary,406.6,1.006x,1.000x,0.994x,1.151x,1.188x
+60.0,Vasa recta (medulla),108.5,1.013x,1.000x,0.987x,1.152x,1.198x
+60.0,Vasa recta - hypoperfused,10.9,1.048x,1.000x,0.954x,1.157x,1.239x
+80.0,Glomerular capillary,1016.1,1.005x,1.000x,0.995x,1.190x,1.232x
+80.0,Peritubular capillary,406.6,1.008x,1.000x,0.992x,1.190x,1.239x
+80.0,Vasa recta (medulla),108.5,1.017x,1.000x,0.984x,1.192x,1.253x
+80.0,Vasa recta - hypoperfused,10.9,1.062x,1.000x,0.942x,1.198x,1.307x
+100.0,Glomerular capillary,1016.1,1.006x,1.000x,0.994x,1.225x,1.276x
+100.0,Peritubular capillary,406.6,1.010x,1.000x,0.990x,1.225x,1.284x
+100.0,Vasa recta (medulla),108.5,1.020x,1.000x,0.981x,1.227x,1.302x
+100.0,Vasa recta - hypoperfused,10.9,1.074x,1.000x,0.931x,1.234x,1.370x
+120.0,Glomerular capillary,1016.1,1.007x,1.000x,0.993x,1.256x,1.316x
+120.0,Peritubular capillary,406.6,1.011x,1.000x,0.989x,1.257x,1.326x
+120.0,Vasa recta (medulla),108.5,1.023x,1.000x,0.978x,1.258x,1.347x
+120.0,Vasa recta - hypoperfused,10.9,1.086x,1.000x,0.921x,1.268x,1.428x
+150.0,Glomerular capillary,1016.1,1.008x,1.000x,0.992x,1.299x,1.372x
+150.0,Peritubular capillary,406.6,1.013x,1.000x,0.987x,1.299x,1.384x
+150.0,Vasa recta (medulla),108.5,1.026x,1.000x,0.974x,1.301x,1.410x
+150.0,Vasa recta - hypoperfused,10.9,1.102x,1.000x,0.908x,1.284x,1.461x

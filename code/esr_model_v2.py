@@ -179,6 +179,35 @@ ESR_HIGH = 100.0       # mm/h -- UPPER limit of the simulated range, and the ESR
                        # law beyond measured physiology.
 ESR_CLINICAL = 80.0    # mm/h -- the ESR above which sustained elevation is the
                        # clinical concern in nephrology; reported as a named point.
+ESR_MAX_SIM = 150.0    # mm/h -- upper limit of the SIMULATED grid.  Beyond 100 the
+                       # k0 amplification is extrapolated beyond its calibration
+                       # anchor and the implied k0 leaves the measured clinical
+                       # interval [3.05, 4.36]; results at ESR > 100 are therefore
+                       # reported as an extrapolation, not as a calibrated range.
+
+# ---------------------------------------------------------------------
+# Two-layer geometry: packing constraint on the core haematocrit.
+#
+#   Eq. (7)  H * pi R^2 = H_core * pi (R - delta)^2
+#   => H_core = H / (1 - 2 delta / D)^2                      (7b)
+#
+# H_core is bounded above by the haematocrit of close-packed red cells,
+# H_max.  A two-layer description that returns H_core > H_max is not
+# physically admissible, so delta is bounded by
+#
+#   delta <= (D/2) * (1 - sqrt(H / H_max))                   (7c)
+#
+# With H = 0.42 and H_max = 0.95 this gives 2 delta / D <= 0.335.
+# The earlier value delta0 = 0.16 D violated this bound for every vessel
+# of diameter > 8 um and returned core haematocrits of 1.24 in the
+# hypoperfused vasa recta; delta0 and the aggregation slope below were
+# therefore re-chosen so that the bound is respected across the whole
+# simulated ESR range (see Supplementary Table S1).
+# ---------------------------------------------------------------------
+H_MAX_CORE = 0.95      # close-packed haematocrit, upper bound on H_core
+CFL_D0_FRAC = 0.10     # delta0 / D  (was 0.16; chosen jointly with the
+                       # packing bound above, see Eq. 7c)
+CFL_AGG_SLOPE = 0.06   # d(f_A)/d(AI)  (was 0.11)
 
 # ---------------------------------------------------------------------
 # Sign convention of the cell-free-layer / shear-rate relation.
@@ -191,7 +220,12 @@ ESR_CLINICAL = 80.0    # mm/h -- the ESR above which sustained elevation is the
 # manuscript reports the full range.  It is listed as an ASSUMPTION, not a
 # measurement, in Supplementary Table S1.
 CFL_SHEAR_EXP = -0.12
-CFL_SHEAR_EXP_SCAN = (-0.24, -0.18, -0.12, -0.06, 0.0, 0.06, 0.12, 0.18, 0.24)
+# Scan range.  |s| > 0.12 drives the cell-free layer of at least one vessel
+# against the packing bound of Eq. (7c) at some ESR in the grid, where the
+# layer can no longer thicken and the fold change saturates.  Values inside
+# this window are packing-admissible throughout, so the ranking is read only
+# over this window.
+CFL_SHEAR_EXP_SCAN = (-0.12, -0.06, 0.0, 0.06, 0.12)
 
 
 def esr_to_aggregate_radius(esr_mm_h):
@@ -359,10 +393,13 @@ def cell_free_layer(D, ai, gamma_dot, ai_ref=None, shear_exp=None):
     Reference magnitudes: 0.8-3.1 um over 10-50 um vessels (ref 11)."""
     ai_ref = aggregate_index(ESR_NORMAL) if ai_ref is None else ai_ref
     e = CFL_SHEAR_EXP if shear_exp is None else float(shear_exp)
-    d0 = float(np.clip(0.16 * D, 0.25e-6, 2.5e-6))
-    f_ai = float(np.clip(1.0 + 0.11 * (ai - ai_ref), 0.4, 2.5))
+    d0 = float(np.clip(CFL_D0_FRAC * D, 0.25e-6, 2.5e-6))
+    f_ai = float(np.clip(1.0 + CFL_AGG_SLOPE * (ai - ai_ref), 0.4, 2.5))
     f_ga = float(np.clip((max(gamma_dot, 1e-6) / 100.0) ** e, 0.4, 2.0))
-    return float(np.clip(d0 * f_ai * f_ga, 0.05e-6, 0.45 * D))
+    d_raw = d0 * f_ai * f_ga
+    # Eq. (7c): packing bound on the core haematocrit
+    d_max = 0.5 * D * (1.0 - np.sqrt(H_TUBE / H_MAX_CORE))
+    return float(min(d_raw, d_max))
 
 
 def cfl_variability(gamma_dot, agg_amp, cv_base=0.30, d_cv=0.22,
@@ -395,7 +432,7 @@ VESSELS = [
 ]
 
 ESR_GRID = np.array([2.0, 5.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0,
-                     80.0, 90.0, 100.0])
+                     80.0, 90.0, 100.0, 120.0, 150.0])
 
 
 def analyse(v: Vessel, esr, k0n, k0h, esr_cal=ESR_NORMAL, phi=None,
@@ -414,14 +451,24 @@ def analyse(v: Vessel, esr, k0n, k0h, esr_cal=ESR_NORMAL, phi=None,
     tau = eta * gw
     delta = cell_free_layer(D, ai, gw, shear_exp=shear_exp)
     R_core = 0.5 * D - delta
-    # WSS temporal variability from CFL variability:
-    #   tau = eta*8V/(D-2*delta_inst)  ->  CV(tau) ~ 2*CV(delta)*D/(D-2*delta)
+    # Eq. (7b): core haematocrit implied by the two-layer construction
+    h_core = H_TUBE / (1.0 - 2.0 * delta / D) ** 2
+    # WSS temporal variability from CFL variability.
+    #   near-wall shear rate  gamma_near = 2 V_core / (D/2 - delta)
+    #   first-order propagation of a CFL fluctuation:
+    #       d gamma_near / gamma_near = 2 d(delta) / (D - 2 delta)
+    #   =>  CV(tau) = CV(delta) * 2 delta / (D - 2 delta)          (8)
+    # The numerator is 2*delta, NOT D: the sensitivity of the near-wall
+    # shear to the layer width vanishes as delta -> 0.
     cvd = cfl_variability(gw, s)
-    cv_tau = cvd * (D / max(D - 2.0 * delta, 1e-9))
+    geo = 2.0 * delta / max(D - 2.0 * delta, 1e-12)
+    cv_tau = cvd * geo
     return dict(vessel=v.name, note=v.note, D_um=D * 1e6, ESR_mm_h=esr, AI=ai,
                 k0_scale=s, V_mm_s=V * 1e3, gamma_w_s=gw,
                 eta_mPa_s=eta * 1e3, tau_w_Pa=tau,
-                CFL_um=delta * 1e6, CFL_CV=cvd, WSS_CV=cv_tau, R_core_um=R_core * 1e6)
+                CFL_um=delta * 1e6, CFL_CV=cvd, WSS_CV=cv_tau,
+                R_core_um=R_core * 1e6, H_core=h_core, geo_factor=geo,
+                packing_limited=bool(h_core > H_MAX_CORE - 1e-6))
 
 
 # =====================================================================
@@ -497,7 +544,7 @@ def main():
     say("\n[T2]  Anchored whole-blood viscosity (mPa.s), H=%.2f, Cokelet k0(H)" % H_TUBE)
     gs = np.logspace(-1, 3.3, 7)
     tab = {}
-    for e in (10.0, 40.0, 60.0, 80.0, 100.0):
+    for e in (10.0, 40.0, 60.0, 80.0, 100.0, 150.0):
         s = k0_scale_from_esr(e, k0n, k0h)
         tab[f"ESR{e:g}"] = [float(quemada(H_TUBE, g, k0_scale=s)) * 1e3 for g in gs]
     t2 = pd.DataFrame(tab, index=[f"{g:g} 1/s" for g in gs])
@@ -539,14 +586,14 @@ def main():
     t4.to_csv(RES / "v2_foldchange.csv", index=False)
 
     rows = []
-    for e_hi in (60.0, 80.0, 100.0):
+    for e_hi in (60.0, 80.0, 100.0, 120.0, 150.0):
         for v in VESSELS:
             r = _fold(v, e_hi)
             r["ESR_hi"] = e_hi
             rows.append(r)
     t4b = pd.DataFrame(rows)[["ESR_hi", "vessel", "gamma_w_s", "d_eta", "d_tau",
                               "d_V", "d_CFL", "d_WSS_CV"]]
-    say("\n   graded, ESR 10 -> 60 / 80 / 100:")
+    say("\n   graded, ESR 10 -> 60 / 80 / 100 / 120 / 150:")
     say(t4b.to_string(index=False))
     t4b.to_csv(RES / "v2_foldchange_by_esr.csv", index=False)
 
@@ -571,7 +618,7 @@ def main():
     for v in VESSELS:
         gw = 8.0 * v.V_ref / v.D
         base = float(quemada(H_TUBE, gw, k0_scale=k0_scale_from_esr(10.0, k0n, k0h)))
-        for e_hi in (60.0, 80.0, 100.0):
+        for e_hi in (60.0, 80.0, 100.0, 150.0):
             r = float(quemada(H_TUBE, gw, k0_scale=k0_scale_from_esr(e_hi, k0n, k0h))) / base
             rows.append(dict(vessel=v.name, gamma_w_s=gw, ESR_hi=e_hi, tau_constQ_ratio=r))
     t6 = pd.DataFrame(rows)

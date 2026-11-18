@@ -63,7 +63,51 @@ VESSEL_COL = {"Glomerular capillary": CB["blue"],
               "Vasa recta - hypoperfused": CB["verm"]}
 
 
+def check_overlap(fig, name):
+    """Flag (i) overlapping text objects and (ii) data lines crossing bare text."""
+    fig.canvas.draw()
+    problems = []
+    for ax in fig.axes:
+        items = []
+        for tx in ax.texts:
+            if not tx.get_text().strip():
+                continue
+            try:
+                items.append((tx.get_text()[:22].replace("\n", " "), tx.get_window_extent(),
+                              tx.get_bbox_patch() is not None))
+            except Exception:
+                pass
+        leg = ax.get_legend()
+        if leg is not None:
+            try:
+                items.append(("legend", leg.get_window_extent(),
+                              leg.get_frame_on()))
+            except Exception:
+                pass
+        for i in range(len(items)):
+            for j in range(i + 1, len(items)):
+                if items[i][1].overlaps(items[j][1]):
+                    problems.append("text overlap: %r x %r" % (items[i][0], items[j][0]))
+        for ln in ax.get_lines():
+            xy = ln.get_xydata()
+            if len(xy) < 2:
+                continue
+            pts = ax.transData.transform(xy)
+            for lab, bb, has_bg in items:
+                if has_bg:
+                    continue
+                if any(bb.x0 < px < bb.x1 and bb.y0 < py < bb.y1 for px, py in pts):
+                    problems.append("line crosses text: %r" % lab)
+    if problems:
+        seen = []
+        for q in problems:
+            if q not in seen:
+                seen.append(q)
+        print("  [LAYOUT] %s: %s" % (name, " | ".join(seen[:6])))
+
+
 def save(fig, name):
+    check_overlap(fig, name)
     png = FIGDIR / f"{name}.png"
     tif = FIGDIR / f"{name}.tif"
     fig.savefig(png, bbox_inches="tight", facecolor="white", dpi=300)
@@ -79,11 +123,11 @@ def save(fig, name):
 # --------------------------------------------------------------------------
 def figure1():
     fig, ax = plt.subplots(figsize=(7.2, 6.4))
-    ax.set_xlim(0, 10); ax.set_ylim(0, 10.6); ax.axis("off")
+    ax.set_xlim(0, 10); ax.set_ylim(-0.25, 11.0); ax.axis("off")
 
     def box(y, h, title, body, fc, ec):
         ax.add_patch(FancyBboxPatch((0.6, y), 8.8, h,
-                     boxstyle="round,pad=0.12,rounding_size=0.18",
+                     boxstyle="round,pad=0.06,rounding_size=0.18",
                      linewidth=1.3, edgecolor=ec, facecolor=fc))
         ax.text(1.0, y + h - 0.36, title, fontsize=10.5, fontweight="bold", color=ec, va="top")
         ax.text(1.0, y + h - 0.80, body, fontsize=8.4, color="#222222", va="top", linespacing=1.45)
@@ -92,30 +136,34 @@ def figure1():
         ax.add_patch(FancyArrowPatch((5.0, y0), (5.0, y1), arrowstyle="-|>",
                      mutation_scale=16, linewidth=1.5, color="#444444"))
         if label:
-            ax.text(5.25, (y0 + y1) / 2, label, fontsize=8.0, color="#444444", va="center")
+            ax.text(5.35, (y0 + y1) / 2, label, fontsize=7.4, color="#444444",
+                    va="center", ha="left", bbox=dict(boxstyle="round,pad=0.18",
+                    facecolor="white", edgecolor="none", alpha=0.92))
 
-    box(8.55, 1.75, "INPUT   clinical measurement",
+    box(8.95, 1.75, "INPUT   clinical measurement",
         "ESR (mm/h), the routine laboratory value.\nThe aggregation index it reflects is\n"
         "haematocrit-corrected in Layer 1.", "#EAF3FB", CB["blue"])
-    box(6.35, 1.85, "LAYER 1   sedimentation  \u2192  aggregate size",
+    box(6.55, 1.85, "LAYER 1   sedimentation  \u2192  aggregate size",
         "derived, not assumed:  Stokes + the measured\nWestergren relation (r = 0.990),  n = 4.65\n"
-        "\u21d2  (1+\u03b1) \u221d \u221aESR ;  R_agg = R_ef(1+\u03b1)", "#F2F2F2", CB["grey"])
+        "\u21d2  $(1+\\alpha)\\propto\\sqrt{\\mathrm{ESR}}$ ;  $R_{\\mathrm{agg}}=R_{\\mathrm{ef}}(1+\\alpha)$", "#F2F2F2", "#6E6E6E")
     box(3.95, 2.05, "LAYER 2-3   aggregation  \u2192  viscosity  \u2192  flow",
-        "Quemada:  \u03b7 = \u03b7_p (1 \u2212 kH/2)\u207b\u00b2 ,\n"
-        "k = (k\u2080 + k\u221e\u221a(\u03b3\u0307/\u03b3\u0307_c)) / (1 + \u221a(\u03b3\u0307/\u03b3\u0307_c))\n"
-        "Tube:  \u03c4_w = D(\u0394P/L)/4     \u03b3\u0307_w = 8V/D\n"
-        "VALIDATED vs published curve: \u00b17 %", "#FFF6E5", CB["orange"])
-    box(1.55, 2.05, "LAYER 4   cell-free layer  \u2192  wall load",
-        "two-layer core/CFL mass balance:\nH\u00b7\u03c0R\u00b2 = H_core\u00b7\u03c0(R\u2212\u03b4)\u00b2\n"
+        "Quemada:  $\\eta=\\eta_p(1-kH/2)^{-2}$\n"
+        "$k=(k_0+k_\\infty\\sqrt{\\dot\\gamma/\\dot\\gamma_c})/(1+\\sqrt{\\dot\\gamma/\\dot\\gamma_c})$\n"
+        "Tube:  $\\tau_w=D(\\Delta P/L)/4$     $\\dot\\gamma_w=8V/D$\n"
+        "CHECKED against the published curve: \u00b17 %", "#FFF6E5", CB["orange"])
+    box(1.35, 2.05, "LAYER 4   cell-free layer  \u2192  wall load",
+        "two-layer core/CFL mass balance:\n$H\\pi R^{2}=H_\\mathrm{core}\\pi(R-\\delta)^{2}$\n"
         "\u21d2 aggregation THICKENS the CFL (cells move away from wall)\n"
         "outputs: gap, CFL, mean WSS, WSS temporal variability", "#E9F7F2", CB["green"])
-    arrow(8.55, 8.24, "ESR"); arrow(6.35, 6.04, "\u03b1"); arrow(3.95, 3.64, "H_core, \u03b7"); arrow(1.55, 1.15)
-    ax.add_patch(FancyBboxPatch((0.6, 0.12), 8.8, 0.95,
+    arrow(8.94, 8.53, "ESR"); arrow(6.53, 6.15, "\u03b1"); arrow(3.93, 3.55, "$H_{\\mathrm{core}},\\ \\eta$")
+    ax.add_patch(FancyBboxPatch((0.6, -0.05), 8.8, 1.05,
                  boxstyle="round,pad=0.10,rounding_size=0.16",
                  linewidth=1.6, edgecolor=CB["verm"], facecolor="#FDEDE5"))
-    ax.text(5.0, 0.60, "OUTCOME OF MODEL:  only WSS temporal variability responds monotonically,\n"
-                       "and only in the low-shear, hypoperfused renal medulla.\nInjury itself is NOT computed (\u00a74.6).",
-            fontsize=8.8, color=CB["verm"], ha="center", va="center", fontweight="bold", linespacing=1.5)
+    ax.text(5.0, 0.45, "OUTCOME OF MODEL:  only WSS temporal variability responds monotonically,\n"
+                       "most strongly in the low-shear, hypoperfused medulla.\nInjury itself is NOT computed (\u00a74.6).",
+            fontsize=8.5, color=CB["verm"], ha="center", va="center", fontweight="bold", linespacing=1.4)
+    fig.suptitle("Figure 1  Structure of the four-layer reduced-order model",
+                 fontsize=11, y=1.03)
     fig.tight_layout(); save(fig, "Figure1_model_overview")
 
 
@@ -172,7 +220,7 @@ def figure3():
         b.annotate(f"{y:.2f}", (x, y), textcoords="offset points", xytext=(6, 6), fontsize=8)
     b.set(xscale="log", xlabel="shear rate (s$^{-1}$)", ylabel="model / measured",
           title="(b) deviation within \u00b17 %", ylim=(0.90, 1.12))
-    fig.suptitle("Figure 3  Validation of the viscosity kernel", fontsize=11, y=1.02)
+    fig.suptitle("Figure 3  Consistency check of the viscosity kernel against the source curve", fontsize=11, y=1.02)
     fig.tight_layout(); save(fig, "Figure3_viscosity_validation")
 
 
@@ -184,14 +232,14 @@ def figure4():
     fig, ax = plt.subplots(1, 2, figsize=(9.4, 3.6))
     a = ax[0]
     a.semilogx(g.gamma_s, g.ratio, "-", lw=2.2, color=CB["blue"])
-    a.axhline(1.10, color=CB["verm"], ls="--", lw=1.2); a.text(0.33, 1.107, "+10 %", fontsize=8, color=CB["verm"])
+    a.axhline(1.10, color=CB["verm"], ls="--", lw=1.2); a.text(0.33, 1.118, "+10 %", fontsize=8, color=CB["verm"])
     a.axvspan(0.3, 3.0, color=CB["orange"], alpha=0.12)
     a.axvline(1016, color=CB["grey"], ls=":", lw=1)
-    a.text(560, 1.19, "glomerular\ncapillary", fontsize=7.4, color=CB["grey"], ha="right")
+    a.text(760, 1.205, "glomerular\ncapillary", fontsize=7.4, color="#666666", ha="right")
     a.axvline(10.9, color=CB["grey"], ls=":", lw=1)
-    a.text(11.6, 1.015, "hypoperfused\nvasa recta", fontsize=7.4, color=CB["grey"])
+    a.text(12.0, 0.988, "hypoperfused\nvasa recta", fontsize=7.4, color="#666666", va="bottom")
     a.set(xlabel="shear rate (s$^{-1}$)", ylabel="viscosity ratio, ESR 100 / ESR 10",
-          ylim=(0.995, 1.26), title="(a) aggregation effect is shear-gated")
+          ylim=(0.975, 1.26), title="(a) aggregation effect is shear-gated")
     b = ax[1]
     styles = [("-", "o", CB["blue"], "standard"), ("--", "s", CB["orange"], "measured clinical"),
               ("-.", "^", CB["green"], r"$k_0$ lower 3.05"), (":", "d", CB["verm"], r"$k_0$ upper 4.36")]
@@ -199,7 +247,7 @@ def figure4():
         b.semilogx([v for _, v in cols], [getattr(row, k) for k, _ in cols],
                    ls, marker=mk, ms=5, lw=1.5, color=c, label=lab)
     b.axhline(1.10, color=CB["grey"], ls="--", lw=1)
-    b.set(xlabel="shear rate (s$^{-1}$)", ylabel="viscosity ratio", ylim=(0.995, 1.26),
+    b.set(xlabel="shear rate (s$^{-1}$)", ylabel="viscosity ratio", ylim=(0.975, 1.26),
           title="(b) four published parameter sets agree")
     b.legend(fontsize=7.2, loc="upper right")
     fig.suptitle("Figure 4  Shear-rate gating of the aggregation contribution to viscosity", fontsize=11, y=1.02)
@@ -232,15 +280,17 @@ def figure5():
 def figure6():
     vs = pd.read_csv(RES / "v2_vessel_states.csv")
     fc = pd.read_csv(RES / "v2_foldchange.csv").set_index("vessel").loc[VESSEL_ORDER]
-    fig, ax = plt.subplots(1, 4, figsize=(17.4, 3.7))
+    fig, ax = plt.subplots(1, 4, figsize=(17.6, 4.15))
     a = ax[0]
     for v in VESSEL_ORDER:
         sub = vs[vs.vessel == v].sort_values("ESR_mm_h")
         a.plot(sub.ESR_mm_h, sub.WSS_CV, "o-", ms=4, lw=1.6, color=VESSEL_COL[v],
                label=VESSEL_SHORT[v])
-    a.set(xlabel="ESR (mm h$^{-1}$)", ylabel="WSS coefficient of variation (-)")
+    a.set(xlabel="ESR (mm h$^{-1}$)", ylabel="WSS coefficient of variation (-)",
+          ylim=(0.035, 0.195))
     a.set_title("(a) variability rises monotonically\nwith ESR", fontsize=9.4, pad=7)
-    a.legend(fontsize=7.0, loc="upper left")
+    a.legend(fontsize=6.6, loc="upper left", frameon=True, framealpha=0.92,
+             edgecolor="none", handlelength=1.3, labelspacing=0.25, borderpad=0.3)
     b = ax[1]
     gamma = fc.gamma_w_s.values.astype(float)
     excess = np.array([float(str(fc.loc[v, "d_WSS_CV"]).rstrip("x")) for v in VESSEL_ORDER]) - 1.0
@@ -250,8 +300,8 @@ def figure6():
                        for v, g in zip(VESSEL_ORDER, gamma)], fontsize=7.6)
     for i, e in enumerate(excess):
         b.text(e + 0.004, i, f"{e*100:.1f} %", va="center", fontsize=8)
-    b.set(xlabel="excess WSS variability, ESR 100 vs ESR 10 (%)", xlim=(0, 0.52))
-    b.set_title("(b) at the default sign the medulla\nleads by 3.0-fold", fontsize=9.4, pad=7)
+    b.set(xlabel="excess WSS variability, ESR 100 vs ESR 10 (%)", xlim=(0, 0.44))
+    b.set_title("(b) at the default sign the hypoperfused\nmedulla leads, but only by 1.34-fold", fontsize=9.4, pad=7)
     b.invert_yaxis()
 
     # ---- (c) multiplicative decomposition of (b) into Eq (8) x Eq (9)
@@ -263,7 +313,8 @@ def figure6():
         r60 = sub[np.isclose(sub.ESR_mm_h, 100.0)].iloc[0]
         D = float(r10.D_um) * 1e-6
         d10, d60 = float(r10.CFL_um) * 1e-6, float(r60.CFL_um) * 1e-6
-        geo10, geo60 = D / (D - 2 * d10), D / (D - 2 * d60)
+        geo10 = 2 * d10 / (D - 2 * d10)
+        geo60 = 2 * d60 / (D - 2 * d60)
         g_f = float(r60.CFL_CV) / float(r10.CFL_CV)          # Eq (9) shear gate
         e_f = geo60 / geo10                                   # Eq (8) geometric
         tot = float(r60.WSS_CV) / float(r10.WSS_CV)
@@ -277,7 +328,7 @@ def figure6():
            edgecolor="white", label="shear gate, Eq (9)")
     c.set_yticks(y); c.set_yticklabels([])
     c.set(xlim=(0, 118), xlabel="share of the log increase in WSS variability (%)")
-    c.set_title("(c) the geometric factor carries the medullary excess",
+    c.set_title("(c) the geometric factor carries most\nof the excess in every vessel",
                 fontsize=9.4, pad=7)
     c.invert_yaxis()
     for i, (sg, sgeo) in enumerate(zip(share_gate, share_geo)):
@@ -295,19 +346,19 @@ def figure6():
              "Vasa recta - hypoperfused": "vasa recta, hypoperfused"}
     for v in VESSEL_ORDER:
         y = rb[v + " [%]"].values
-        d.plot(rb.shear_exp, y, "o-", ms=4, lw=1.6, color=VESSEL_COL[v])
-        d.annotate(short[v], xy=(rb.shear_exp.iloc[-1], y[-1]),
-                   xytext=(4, 0), textcoords="offset points",
-                   fontsize=7.0, va="center", ha="left", color=VESSEL_COL[v])
+        d.plot(rb.shear_exp, y, "o-", ms=4, lw=1.6, color=VESSEL_COL[v],
+               label=short[v])
     d.axvline(0.0, color=CB["grey"], lw=1.0, ls="--")
     d.axvline(-0.12, color=CB["black"], lw=1.0, ls=":")
-    d.annotate("default\n$s=-0.12$", xy=(-0.12, 1.0), xycoords=("data", "axes fraction"),
-               xytext=(4, -11), textcoords="offset points", fontsize=6.8,
-               color=CB["black"], ha="left", va="top")
-    d.annotate("crossover\n$s=+0.02$", xy=(0.02, 1.0), xycoords=("data", "axes fraction"),
-               xytext=(5, -31), textcoords="offset points", fontsize=6.8,
-               color=CB["grey"], ha="left", va="top")
-    d.set(xlim=(-0.27, 0.34), ylim=(0, 118),
+    d.annotate("default\n$s=-0.12$", xy=(-0.12, 39.6), xycoords="data",
+               xytext=(5, 0), textcoords="offset points", fontsize=6.6,
+               color=CB["black"], ha="left", va="center")
+    d.annotate("crossover\n$s=+0.04$", xy=(0.045, 34.6), xycoords="data",
+               xytext=(6, 0), textcoords="offset points", fontsize=6.6,
+               color="#666666", ha="left", va="center")
+    d.legend(fontsize=6.4, loc="upper right", ncol=1, frameon=True, framealpha=0.92,
+             edgecolor="none", handlelength=1.2, labelspacing=0.22, borderpad=0.3)
+    d.set(xlim=(-0.155, 0.165), ylim=(25, 46),
           xlabel="CFL shear exponent $s$   ($\\delta \\propto \\dot{\\gamma}^{\\,s}$)",
           ylabel="excess WSS variability (%)")
     d.set_title("(d) the worst vessel is set by the sign of $s$\n"
