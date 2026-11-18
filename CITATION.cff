@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: "If you use this model, please cite the manuscript and this software repository."
 title: "ESR-renal-microcirculation-model: a reduced-order haemodynamic model of ESR-driven wall-shear-stress variability in the renal microcirculation"
 type: software
-version: "0.8"
-date-released: "2026-10-11"
+version: "1.1"
+date-released: "2026-11-18"
 license: MIT
 repository-code: "https://github.com/kongtonglangke/esr-renal-microcirculation-model"
 url: "https://github.com/kongtonglangke/esr-renal-microcirculation-model"

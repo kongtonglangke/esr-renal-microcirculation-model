@@ -19,6 +19,30 @@ recomputed and each judgement can be checked. An archived, citable snapshot live
 
 ---
 
+## 0. What changed in v1.1 (18 November 2026)
+
+Version 1.1 accompanies the revised manuscript, in which two physical errors identified in
+peer review were corrected. Both corrections change numbers, and one of them shrinks the
+paper's anatomical claim. They are recorded here rather than quietly absorbed.
+
+| | v0.8 | v1.1 |
+|:--|:--|:--|
+| Two-layer closure | no bound on the implied core haematocrit | core haematocrit required to stay below the close-packing value **H_max = 0.95**, which bounds the layer by a new Eq. (7c); H_core is now an output, reported for every state |
+| Layer scale δ₀ | 0.16 *D* (implies H_core = 1.24 in the hypoperfused vasa recta — physically impossible) | **0.10 *D***, chosen jointly with the bound |
+| Aggregation slope of f_A | 0.11 per unit amplification | **0.06**, so that no vessel reaches the bound below ESR 150 |
+| WSS-variability transfer, Eq. (8) | CV_τ = CV_δ · *D*/(*D* − 2δ) | **CV_τ = CV_δ · 2δ/(*D* − 2δ)** — the numerator is 2δ, not *D* |
+| ESR grid | 10–100 mm h⁻¹ | **10–150 mm h⁻¹** |
+| Excess WSS variability at ESR 100, hypoperfused medulla | 46.0% | **37.0%** |
+| Excess WSS variability at ESR 100, glomerular capillary | 15.2% | **27.6%** |
+| Medulla : glomerulus contrast | 3.0-fold | **1.34-fold** |
+| Window of the CFL shear exponent *s* | −0.24 … +0.24 | **−0.12 … +0.12** (wider values drive a vessel into the packing bound and saturate) |
+
+The existence, monotonicity and ESR-grading of the predicted effect are unchanged, and so
+is the conclusion that one unresolved constitutive sign decides which vessel leads. What is
+withdrawn is the claim that the medullary localisation is large.
+
+---
+
 ## 1. What the model does
 
 A four-layer **reduced-order** (laptop-scale) model that carries the erythrocyte
@@ -42,8 +66,13 @@ physiological diameters, pressures and haematocrit.
 | Figures | All seven manuscript figures | `code/make_ms_figures.py` |
 
 Vessels: glomerular capillary, peritubular capillary, vasa recta (normally perfused),
-vasa recta (hypoperfused). ESR is swept over **10–100 mm h⁻¹** against a reference of
-10 mm h⁻¹.
+vasa recta (hypoperfused). ESR is swept over **10–150 mm h⁻¹** against a reference of
+10 mm h⁻¹. The aggregation amplification is calibrated at the anchor ESR 100 mm h⁻¹; values
+above 100 are an extrapolation, because the implied k₀ then leaves the interval measured in
+clinical samples ([3.05, 4.36]) and are flagged as such throughout.
+The two-layer geometry is closed by a **close-packing bound** (Eq. 7b–7c in the manuscript):
+the core haematocrit implied by any layer width must stay below H_max = 0.95, which caps the
+layer at 2δ/*D* ≤ 0.335 and is what limits the medullary amplification.
 
 ## 2. Headline result
 
@@ -52,19 +81,25 @@ Two statements survive every robustness test, and they are of different kinds.
 **(a) Sign-independent — the effect exists and is graded.** The ESR-driven rise in the
 temporal variability of wall shear stress is positive **in every vessel and at every value
 of the one parameter the literature leaves unsettled** — the shear exponent *s* of the
-cell-free-layer relation δ ∝ γ̇ ˢ, scanned over −0.24 … +0.24. In the hypoperfused medulla
-the excess relative to ESR 10 mm h⁻¹ rises from 6.5% at ESR 20 to 17.1% at 40, 26.8% at 60,
-36.4% at 80 and 46.0% at 100.
+cell-free-layer relation δ ∝ γ̇ ˢ, scanned over −0.12 … +0.12. In the hypoperfused medulla
+the excess relative to ESR 10 mm h⁻¹ rises from 6.5% at ESR 20 to 16.1% at 40, 23.9% at 60,
+30.7% at 80, 37.0% at 100 and 46.1% at 150. The window is narrower than the range the
+literature can be read to support because of the packing bound: above |*s*| ≈ 0.15 the layer
+of at least one vessel reaches H_max somewhere in the ESR grid, stops thickening, and returns
+a saturated — and therefore uninformative — fold change.
 
 **(b) Sign-dependent — the anatomical target is not fixed by the model.** *Which* vessel is
-most loaded is decided entirely by the sign of *s*, with a crossover at *s* ≈ +0.02:
+most loaded is decided entirely by the sign of *s*, with a crossover at *s* ≈ +0.04:
 
 | *s* | most loaded vessel | excess at ESR 100 |
 |:--|:--|:--|
-| −0.24 … 0.00 | vasa recta, hypoperfused (medulla) | 112.2% … 26.1% |
-| +0.06 … +0.24 | glomerular capillary | 31.3% … 106.6% |
+| −0.12 … 0.00 | vasa recta, hypoperfused (medulla) | 37.0% … 31.9% |
+| +0.06 … +0.12 | glomerular capillary | 31.1% … 32.9% |
 
-The normally perfused vasa recta is almost invariant across the whole range (23.8–24.5%),
+The contrast between the two candidates is only about 1.3-fold, and it narrows at the top of
+the grid: the hypoperfused layer reaches the packing bound at ESR 150 while the cortical
+layer does not, so the medullary excess saturates at 46.1% while the glomerular excess climbs
+to 37.2%. The normally perfused vasa recta is the most stable of the four (29.6–30.2%),
 because its wall shear rate (≈109 s⁻¹) lies close to the 100 s⁻¹ reference of the CFL
 relation, so that the shear factor is ≈1 whatever the sign. Full sweep:
 `results/v2_cfl_sign_robustness.csv`.
@@ -129,10 +164,16 @@ python code/make_ms_figures.py         # Figures 1–7  -> figures/
   the committed output). `./reproduce.sh` normalises text output to LF line endings, so a
   re-run leaves a clean `git status` apart from that one timestamp.
 * The pipeline is deterministic: no random seeds, no stochastic sampling.
-* `results/verification_3x3_log.txt` is the log of the multi-method internal check that was
-  run three consecutive times before submission (three mutually independent checkers:
-  structure/numbers/text, an independent cross-check that shares no code with the first,
-  and a cross-reference/narrative consistency check).
+* `code/verify_repository_consistency.py` re-derives, from `results/` alone, every number
+  quoted in Tables 5, 6 and 7, checks that the thirteen numbered equations are present and in
+  order, that all 34 references are cited in strict first-appearance order, and that the
+  abstract respects the 200-word limit. It runs on this repository with no external input and
+  currently reports **65/65 checks passing** (log: `results/verification_r1_log.txt`).
+* `results/verification_3x3_log.txt` is the log of the multi-method internal check of the
+  **v0.8** submission package (three mutually independent checkers: structure/numbers/text, an
+  independent cross-check sharing no code with the first, and a cross-reference/narrative
+  consistency check). It is retained for provenance; the numbers it verified have since been
+  recomputed under v1.1 and are covered by the checker above.
 * The QC scripts are shipped for transparency. They validate the *submission package*
   (cover letter, reviewer suggestions, typeset files), which is not distributed here, so in
   this repository they exit immediately with a notice; all numerical results they verify are
@@ -145,8 +186,12 @@ assumption), are tabulated in the manuscript's Supplementary Table S1 (parameter
 Those that are literature-anchored carry a DOI and/or a PubMed identifier. Two modelling
 choices are stated explicitly rather than hidden:
 
-* the cell-free-layer scale δ₀ = 0.16 *D*, chosen so that the absolute layer thickness falls
-  inside the measured range 0.8–3.1 µm for the vessel diameters used;
+* the cell-free-layer scale δ₀ = 0.10 *D*, chosen jointly with the close-packing bound rather
+  than for its absolute value alone — a larger coefficient (0.16 *D* was used in v0.8) drives
+  the implied core haematocrit of the hypoperfused vasa recta to 1.24, which is inadmissible;
+* the close-packing bound H_max = 0.95 on the core haematocrit (Eq. 7b–7c), which caps the
+  layer and therefore caps the medullary amplification;
+* the aggregation slope of *f*_A, 0.06 per unit amplification, chosen with the same constraint;
 * the shear exponent *s*, left free and scanned, because the literature does not settle its
   sign.
 
@@ -158,7 +203,7 @@ choices are stated explicitly rather than hidden:
   title   = {ESR-renal-microcirculation-model: a reduced-order haemodynamic model of
              ESR-driven wall-shear-stress variability in the renal microcirculation},
   year    = {2026},
-  version = {0.8},
+  version = {1.1},
   doi     = {10.6084/m9.figshare.34333371},
   url     = {https://github.com/kongtonglangke/esr-renal-microcirculation-model}
 }
@@ -174,15 +219,17 @@ Please also cite the manuscript (see `CITATION.cff`).
 
 ## 9. Versioning
 
-The repository content corresponds to manuscript version **v0.8**.
+The repository content corresponds to manuscript version **v1.1** (revised submission,
+18 November 2026). Version 0.8 corresponds to the originally submitted manuscript and is
+still recoverable from the history at commit `8108696`.
 
 The snapshot is archived and citable independently of later edits:
 **https://doi.org/10.6084/m9.figshare.34333371** (figshare, 11 October 2026).
 The same content is marked by a release tag in this repository:
 
 ```bash
-git tag -a v0.8 -m "Manuscript v0.8"
-git push origin v0.8
+git tag -a v1.1 -m "Manuscript v1.1 (peer-review revision)"
+git push origin v1.1
 ```
 
 If the content changes substantively, archive a new version at figshare and update both the
